@@ -67,8 +67,9 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
     const data = await res.json()
     setLoading(false)
 
-    if (!data.ok) { setErro(data.erro ?? 'Erro ao gerar.'); return }
+    if (!data.ok) { setErro(data.erro ?? 'Erro ao gerar. Verifique a configuração da API.'); return }
     setResultado(data.conteudo)
+    if (data.aviso) setErro(data.aviso)
   }
 
   const copiar = () => {
@@ -180,7 +181,14 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
 
       {erro && (
         <div className="px-4 py-3 rounded-xl text-sm"
-          style={{ background:'rgba(220,38,38,0.08)', border:'1px solid rgba(220,38,38,0.2)', color:'#dc2626' }}>
+          style={{
+            background: erro.startsWith('⚠️') || erro.startsWith('Conteúdo de demonstração') 
+              ? 'rgba(234,179,8,0.1)' : 'rgba(220,38,38,0.08)',
+            border: erro.startsWith('⚠️') || erro.startsWith('Conteúdo de demonstração')
+              ? '1px solid rgba(234,179,8,0.3)' : '1px solid rgba(220,38,38,0.2)',
+            color: erro.startsWith('⚠️') || erro.startsWith('Conteúdo de demonstração')
+              ? '#92400e' : '#dc2626'
+          }}>
           {erro}
         </div>
       )}

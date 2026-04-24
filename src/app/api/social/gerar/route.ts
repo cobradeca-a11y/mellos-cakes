@@ -2,96 +2,129 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'edge'
 
-const SYSTEM = `Você é um especialista em marketing digital para confeitarias artesanais.
-Gera conteúdo real, comercial e simples para vender bolos, tortas e doces.
-Sempre priorize WhatsApp como canal de contato.
-Tom direto, humano, sem exageros. Foco em venda real.
-Responda APENAS em JSON válido, sem markdown, sem explicações fora do JSON.`
+// Usa a API Anthropic — chave configurada via variável de ambiente ANTHROPIC_API_KEY
+// Se não tiver chave, usa fallback com conteúdo de demonstração
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY ?? ''
 
-const MOTORES: Record<string, string> = {
-  venda: 'Gere conteúdo direto para VENDER o produto. Foco em despertar desejo e levar à ação imediata.',
-  engajamento: 'Gere conteúdo para ENGAJAMENTO: perguntas, enquetes, interação. Não venda diretamente.',
-  prova_social: 'Gere conteúdo de PROVA SOCIAL usando depoimentos, bastidores e entregas reais.',
-  educativo: 'Gere conteúdo EDUCATIVO explicando sabores, tamanhos, recheios, prazos e diferenciais.',
-  promocional: 'Gere conteúdo PROMOCIONAL para desconto, combo ou oferta por tempo limitado.',
-  reaproveitamento: 'ADAPTE o conteúdo fornecido para outra rede social mantendo a essência.',
+const SYSTEM = `Você é especialista em marketing digital para confeitarias artesanais brasileiras.
+Cria conteúdo real, direto e humano para vender bolos, tortas e doces.
+Priorize sempre o WhatsApp como canal de contato.
+Use linguagem simples, comercial e próxima. Sem exageros.
+RESPONDA APENAS EM JSON VÁLIDO. Sem markdown, sem texto fora do JSON.`
+
+const MOTORES: Record<string,string> = {
+  venda:           'Gere conteúdo DIRETO para VENDER. Desperte desejo e leve à ação imediata.',
+  engajamento:     'Gere ENGAJAMENTO: perguntas, enquetes e interação. Não venda diretamente.',
+  prova_social:    'Gere PROVA SOCIAL com depoimentos, bastidores e entregas.',
+  educativo:       'Gere conteúdo EDUCATIVO explicando sabores, tamanhos, recheios e prazos.',
+  promocional:     'Gere conteúdo PROMOCIONAL para desconto, combo ou oferta com urgência.',
+  reaproveitamento:'ADAPTE o conteúdo fornecido para outra rede mantendo a essência.',
 }
 
-const FORMATOS: Record<string, string> = {
-  post: 'Post estático para feed',
-  reels: 'Roteiro de Reels/video curto de ate 60 segundos com narracao e cenas',
-  story: 'Sequencia de 3 a 5 stories com texto e acao em cada tela',
-  carrossel: 'Carrossel de 4 a 6 slides com titulo e texto por slide',
-  shorts: 'Roteiro para YouTube Shorts com cenas e narracao',
+const FORMATOS: Record<string,string> = {
+  post:     'Post estático para o feed',
+  reels:    'Roteiro de Reels com cenas numeradas (max 60s)',
+  story:    'Sequência de 3 a 5 stories com texto e ação em cada tela',
+  carrossel:'Carrossel de 4 a 6 slides com título e texto por slide',
+  shorts:   'Roteiro de YouTube Shorts com cenas e narração',
   mensagem: 'Mensagem de WhatsApp direta e persuasiva',
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { motor='venda', formato='post', canal='instagram', produto, tipo_produto,
-      publico='clientes que gostam de bolos artesanais', objetivo, tom='comercial e amigavel',
-      cta, link_whatsapp, observacoes, conteudo_original } = body
+    const {
+      motor='venda', formato='post', canal='instagram',
+      produto, tipo_produto, publico='pessoas que amam bolos artesanais',
+      objetivo, tom='comercial e amigável', cta, link_whatsapp,
+      observacoes, conteudo_original,
+    } = body
 
-    const isVideo    = formato === 'reels' || formato === 'shorts'
-    const isCarrossel = formato === 'carrossel'
-    const isStory    = formato === 'story'
+    if (!produto?.trim()) {
+      return NextResponse.json({ ok:false, erro:'Informe o produto.' }, { status:400 })
+    }
 
-    const userPrompt = `
-Motor: ${MOTORES[motor] ?? MOTORES.venda}
-Rede social: ${canal}
-Formato: ${FORMATOS[formato] ?? 'Post'}
-Produto: ${produto ?? 'bolo artesanal'}
-Tipo: ${tipo_produto ?? 'confeitaria'}
-Publico: ${publico}
-Objetivo: ${objetivo ?? 'gerar vendas'}
-Tom de voz: ${tom}
-CTA: ${cta ?? 'Encomendar pelo WhatsApp'}
-WhatsApp/Link: ${link_whatsapp ?? ''}
-Observacoes: ${observacoes ?? ''}
-${conteudo_original ? `Conteudo original para adaptar:\n${conteudo_original}` : ''}
+    const isVideo     = formato==='reels' || formato==='shorts'
+    const isCarrossel = formato==='carrossel'
+    const isStory     = formato==='story'
 
-Retorne EXATAMENTE este JSON (sem nada fora do JSON):
-{
-  "titulo": "titulo interno",
-  "texto_principal": "texto completo",
-  "legenda": "legenda da publicacao",
-  "hashtags": "#confeitaria #bolo ...",
-  "cta": "chamada para acao",
-  "roteiro": ${isVideo ? '"roteiro com cenas numeradas: 1. ... 2. ..."' : 'null'},
-  "slides": ${isCarrossel ? '[{"titulo":"Slide 1","texto":"texto do slide"}]' : 'null'},
-  "stories": ${isStory ? '[{"tela":1,"texto":"texto","acao":"arrastar para cima"}]' : 'null'},
-  "melhor_rede": "rede social ideal para este conteudo",
-  "melhor_horario": "horario sugerido ex: 19h-21h",
-  "dica": "dica rapida de uso"
-}`
+    const prompt = `Motor: ${MOTORES[motor]??MOTORES.venda}
+Rede: ${canal} | Formato: ${FORMATOS[formato]??'Post'}
+Produto: ${produto} | Tipo: ${tipo_produto??'confeitaria'}
+Público: ${publico}
+Objetivo: ${objetivo??'gerar vendas'}
+Tom: ${tom} | CTA: ${cta??'Encomendar pelo WhatsApp'}
+WhatsApp: ${link_whatsapp??''} | Obs: ${observacoes??''}
+${conteudo_original?`Original:\n${conteudo_original}`:''}
+
+JSON exato (sem nada fora):
+{"titulo":"...","texto_principal":"...","legenda":"...","hashtags":"...","cta":"...","roteiro":${isVideo?'"..."':'null'},"slides":${isCarrossel?'[{"titulo":"","texto":""}]':'null'},"stories":${isStory?'[{"tela":1,"texto":"","acao":""}]':'null'},"melhor_rede":"...","melhor_horario":"...","dica":"..."}`
+
+    if (!ANTHROPIC_KEY) {
+      // Fallback demonstrativo quando não há chave
+      return NextResponse.json({
+        ok: true,
+        conteudo: {
+          titulo: `${produto} — Conteúdo de ${motor}`,
+          texto_principal: `🎂 ${produto} artesanal feito com amor!\n\nCada detalhe pensado pra você. Encomende já e garanta o seu!\n\nEntre em contato pelo WhatsApp ${link_whatsapp??''}`,
+          legenda: `Seu ${produto} perfeito está aqui! 🎂✨ Feito com os melhores ingredientes, personalizado do seu jeito. Faça já sua encomenda!`,
+          hashtags: '#confeitaria #boloartesanal #bolopersonalizado #bolodelicioso #confeitariaartesanal #feitocomamor',
+          cta: cta ?? 'Encomendar pelo WhatsApp agora!',
+          roteiro: isVideo ? '1. Mostrar o bolo finalizado\n2. Cortar uma fatia\n3. Mostrar o recheio\n4. Chamar para o WhatsApp' : null,
+          slides: isCarrossel ? [
+            { titulo: `${produto} chegou!`, texto: 'Feito com ingredientes selecionados' },
+            { titulo: 'Como encomendar?', texto: 'Simples! Mande mensagem no WhatsApp' },
+            { titulo: 'Personalizado', texto: 'Do seu jeito, do seu tamanho' },
+            { titulo: 'Encomende já!', texto: link_whatsapp ?? 'WhatsApp no perfil' },
+          ] : null,
+          stories: isStory ? [
+            { tela:1, texto:`${produto} chegou! 🎂`, acao:'Arraste para ver mais' },
+            { tela:2, texto:'Feito com amor e ingredientes de qualidade', acao:'Continue assistindo' },
+            { tela:3, texto:'Encomende pelo WhatsApp!', acao:'Clique no link da bio' },
+          ] : null,
+          melhor_rede: 'Instagram',
+          melhor_horario: '18h–21h',
+          dica: '⚠️ Configure a variável ANTHROPIC_API_KEY na Vercel para geração real com IA.',
+        },
+        aviso: 'Conteúdo de demonstração. Configure ANTHROPIC_API_KEY na Vercel para IA real.'
+      })
+    }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key':    ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01',
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1500,
         system: SYSTEM,
-        messages: [{ role: 'user', content: userPrompt }],
+        messages: [{ role:'user', content: prompt }],
       }),
     })
+
+    if (!response.ok) {
+      const err = await response.text()
+      return NextResponse.json({ ok:false, erro:`Erro na API: ${err.slice(0,200)}` }, { status:500 })
+    }
 
     const data = await response.json()
     const rawText = data.content?.[0]?.text ?? '{}'
 
     let parsed: any
-    try {
-      parsed = JSON.parse(rawText)
-    } catch {
+    try { parsed = JSON.parse(rawText) }
+    catch {
       const match = rawText.match(/\{[\s\S]*\}/)
       try { parsed = match ? JSON.parse(match[0]) : null } catch { parsed = null }
     }
 
-    if (!parsed) return NextResponse.json({ ok: false, erro: 'Falha ao gerar conteudo.' }, { status: 500 })
+    if (!parsed) return NextResponse.json({ ok:false, erro:'Falha ao interpretar resposta da IA.' }, { status:500 })
 
-    return NextResponse.json({ ok: true, conteudo: parsed })
+    return NextResponse.json({ ok:true, conteudo: parsed })
+
   } catch (err: any) {
-    return NextResponse.json({ ok: false, erro: err.message }, { status: 500 })
+    return NextResponse.json({ ok:false, erro: err.message }, { status:500 })
   }
 }
