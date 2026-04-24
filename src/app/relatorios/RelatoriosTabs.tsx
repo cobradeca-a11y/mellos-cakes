@@ -36,17 +36,7 @@ function RankRow({ label, value, max, color, suffix = 'x', extra = '' }:
 // ── Botão exportar PDF ──────────────────────────────────
 function ExportButton({ tabName }: { tabName: string }) {
   const handlePrint = () => {
-    // Remove dark class before print, restore after
-    const html = document.documentElement
-    const wasDark = html.classList.contains('dark')
-    if (wasDark) html.classList.remove('dark')
-
-    setTimeout(() => {
-      window.print()
-      setTimeout(() => {
-        if (wasDark) html.classList.add('dark')
-      }, 500)
-    }, 80)
+    window.print()
   }
 
   return (
