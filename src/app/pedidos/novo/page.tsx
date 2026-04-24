@@ -1,9 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
-import { createOrder } from '../actions'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { OrderForm } from '../OrderForm'
-import { CakeSelector } from '../CakeSelector'
+import { NovoPedidoClient } from './NovoPedidoClient'
 
 export const metadata = { title: 'Novo Pedido' }
 
@@ -14,36 +12,28 @@ export default async function NovoPedidoPage({ searchParams }: { searchParams: {
     { data: customers },
     { data: sizes },
     { data: flavors },
-    { data: surcharges },
+    { data: fillings },
+    { data: toppings },
   ] = await Promise.all([
     supabase.from('customers').select('id, name').eq('active', true).order('name'),
     supabase.from('cake_sizes').select('*').eq('active', true).order('sort_order'),
     supabase.from('cake_flavors').select('*').eq('active', true).order('sort_order'),
-    supabase.from('cake_surcharges').select('*'),
+    supabase.from('cake_fillings').select('*').eq('active', true).order('sort_order'),
+    supabase.from('cake_toppings').select('*').eq('active', true).order('sort_order'),
   ])
 
-  const massas    = (flavors ?? []).filter(f => f.type === 'massa')
-  const recheios  = (flavors ?? []).filter(f => f.type === 'recheio')
-  const coberturas = (flavors ?? []).filter(f => f.type === 'cobertura')
-
   return (
-    <div className="max-w-2xl space-y-5">
+    <div className="max-w-3xl space-y-5">
       <div className="flex items-center gap-3">
         <Link href="/pedidos" className="btn-ghost"><ArrowLeft className="w-4 h-4" /></Link>
         <h1 className="page-title">Novo Pedido</h1>
       </div>
-
-      <CakeSelector
-        sizes={sizes ?? []}
-        massas={massas}
-        recheios={recheios}
-        coberturas={coberturas}
-        surcharges={surcharges ?? []}
-      />
-
-      <OrderForm
-        action={createOrder}
+      <NovoPedidoClient
         customers={customers ?? []}
+        sizes={sizes ?? []}
+        flavors={flavors ?? []}
+        fillings={fillings ?? []}
+        toppings={toppings ?? []}
         defaultCustomerId={searchParams.cliente}
       />
     </div>

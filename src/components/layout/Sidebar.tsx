@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
-  LayoutDashboard, Users, ShoppingBag, Cookie, BookOpen,
-  ClipboardList, ShoppingCart, Truck, CalendarDays, DollarSign, BarChart2,
+  LayoutDashboard, BarChart2, Users, ShoppingBag, Cookie, BookOpen,
+  ClipboardList, ShoppingCart, Truck, CalendarDays, DollarSign,
   Megaphone, Settings, FileText, Building2, Package, X, Menu
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
