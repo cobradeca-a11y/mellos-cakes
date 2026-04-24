@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Users, ShoppingBag, Cookie, BookOpen,
-  ClipboardList, ShoppingCart, Truck, CalendarDays, DollarSign,
+  ClipboardList, ShoppingCart, Truck, CalendarDays, DollarSign, BarChart2,
   Megaphone, Settings, FileText, Building2, Package, X, Menu
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -57,7 +57,10 @@ const navGroups = [
   },
   {
     label: null,
-    items: [{ href: '/configuracoes', icon: Settings, label: 'Configurações' }],
+    items: [
+      { href: '/relatorios', icon: BarChart2, label: 'Relatórios' },
+      { href: '/configuracoes', icon: Settings, label: 'Configurações' },
+    ],
   },
 ]
 
