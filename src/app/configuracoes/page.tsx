@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Settings } from 'lucide-react'
 import { saveSettings } from './actions'
 import { MarkupPreview } from './MarkupPreview'
+import { SaveButton } from './SaveButton'
 
 export const metadata = { title: 'Configurações' }
 
@@ -18,7 +19,7 @@ export default async function ConfiguracoesPage() {
         <h1 className="page-title">Configurações</h1>
       </div>
 
-      <form action={saveSettings} className="space-y-5">
+      <form className="space-y-5">
         <div className="card p-6 space-y-4">
           <h3 className="font-semibold" style={{ color: 'var(--text-1)' }}>Dados do Negócio</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -50,14 +51,13 @@ export default async function ConfiguracoesPage() {
             </div>
             <div>
               <label className="label">Markup Padrão (multiplicador)</label>
-              {/* Preview interativo do markup — client component */}
               <MarkupPreview defaultValue={settings?.default_markup ?? 2.5} />
             </div>
           </div>
         </div>
 
         <div className="flex justify-end">
-          <button type="submit" className="btn-primary">Salvar Configurações</button>
+          <SaveButton action={saveSettings} />
         </div>
       </form>
     </div>
