@@ -56,7 +56,7 @@ export function RecipeForm({ action, ingredients, defaultValues = {}, defaultIte
       className="space-y-5"
     >
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Informações da Receita</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Informações da Receita</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <label className="label">Nome *</label>
@@ -89,9 +89,9 @@ export function RecipeForm({ action, ingredients, defaultValues = {}, defaultIte
       {/* Ingredients */}
       <div className="card p-6 space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-neutral-800">Ingredientes</h3>
+          <h3 className="font-semibold text-[var(--text-1)]">Ingredientes</h3>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-neutral-500">Custo total: <strong className="text-brand-500">R$ {totalCost.toFixed(2)}</strong></span>
+            <span className="text-sm text-[var(--text-3)]">Custo total: <strong className="text-brand-500">R$ {totalCost.toFixed(2)}</strong></span>
             <button type="button" onClick={addItem} className="btn-ghost text-xs">
               <Plus className="w-3.5 h-3.5" /> Adicionar
             </button>
@@ -134,7 +134,7 @@ export function RecipeForm({ action, ingredients, defaultValues = {}, defaultIte
       </div>
 
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Modo de Preparo & Notas</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Modo de Preparo & Notas</h3>
         <div>
           <label className="label">Modo de Preparo</label>
           <textarea name="instructions" rows={5} defaultValue={defaultValues.instructions ?? ''}

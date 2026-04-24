@@ -3,7 +3,7 @@ import { Topbar } from '@/components/layout/Topbar'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-[var(--hover)]">
       <Sidebar />
       <div style={{ marginLeft: 'var(--sidebar-w)' }}>
         <Topbar />

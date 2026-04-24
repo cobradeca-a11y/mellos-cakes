@@ -32,7 +32,7 @@ export default async function ProdutosPage({ searchParams }: { searchParams: { q
       <div className="page-header">
         <div>
           <h1 className="page-title">Catálogo de Produtos</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">{count ?? 0} produtos</p>
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{count ?? 0} produtos</p>
         </div>
         <Link href="/produtos/novo" className="btn-primary">
           <Plus className="w-4 h-4" /> Novo Produto
@@ -52,7 +52,7 @@ export default async function ProdutosPage({ searchParams }: { searchParams: { q
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {(products ?? []).length === 0 ? (
-          <div className="col-span-4 card p-12 text-center text-neutral-400">
+          <div className="col-span-4 card p-12 text-center text-[var(--muted)]">
             <ShoppingBag className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p>Nenhum produto encontrado</p>
           </div>
@@ -71,17 +71,17 @@ export default async function ProdutosPage({ searchParams }: { searchParams: { q
                   </span>
                 )}
                 {!p.available && (
-                  <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-[var(--bg-card)]/60 flex items-center justify-center">
                     <span className="badge-red">Indisponível</span>
                   </div>
                 )}
               </div>
               <div className="p-4">
-                <p className="text-xs text-neutral-400 mb-1">{(p.product_categories as any)?.name ?? '—'}</p>
-                <h3 className="font-semibold text-neutral-900 group-hover:text-brand-500 transition-colors">{p.name}</h3>
+                <p className="text-xs text-[var(--muted)] mb-1">{(p.product_categories as any)?.name ?? '—'}</p>
+                <h3 className="font-semibold text-[var(--text-1)] group-hover:text-brand-500 transition-colors">{p.name}</h3>
                 <div className="flex items-center justify-between mt-2">
                   <p className="font-bold text-brand-500">{formatCurrency(p.base_price)}</p>
-                  <p className="text-xs text-neutral-400">{p.min_production_days}d preparo</p>
+                  <p className="text-xs text-[var(--muted)]">{p.min_production_days}d preparo</p>
                 </div>
               </div>
             </Link>

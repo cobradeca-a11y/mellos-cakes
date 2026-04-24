@@ -30,7 +30,7 @@ export default async function ComprasPage({ searchParams }: { searchParams: { st
       <div className="page-header">
         <div>
           <h1 className="page-title">Pedidos de Compra</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">{count ?? 0} pedidos</p>
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{count ?? 0} pedidos</p>
         </div>
         <Link href="/compras/nova" className="btn-primary">
           <Plus className="w-4 h-4" /> Nova Compra
@@ -57,7 +57,7 @@ export default async function ComprasPage({ searchParams }: { searchParams: { st
           <tbody>
             {(orders ?? []).length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-12 text-neutral-400">
+                <td colSpan={6} className="text-center py-12 text-[var(--muted)]">
                   <ShoppingCart className="w-10 h-10 mx-auto mb-3 opacity-30" />
                   <p>Nenhum pedido de compra</p>
                 </td>
@@ -65,11 +65,11 @@ export default async function ComprasPage({ searchParams }: { searchParams: { st
             ) : (
               (orders ?? []).map((o: any) => (
                 <tr key={o.id}>
-                  <td className="font-medium text-neutral-900">{o.suppliers?.name ?? '—'}</td>
+                  <td className="font-medium text-[var(--text-1)]">{o.suppliers?.name ?? '—'}</td>
                   <td><span className={statusBadge[o.status] ?? 'badge-gray'}>{o.status}</span></td>
                   <td>{o.expected_delivery ? formatDate(o.expected_delivery) : '—'}</td>
                   <td className="font-semibold">{formatCurrency(o.total_amount)}</td>
-                  <td className="text-neutral-400 text-xs">{formatDate(o.created_at)}</td>
+                  <td className="text-[var(--muted)] text-xs">{formatDate(o.created_at)}</td>
                   <td>
                     <div className="flex gap-2 justify-end">
                       <Link href={`/compras/${o.id}`} className="btn-ghost text-xs py-1 px-2">Ver</Link>

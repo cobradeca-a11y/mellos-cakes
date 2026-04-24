@@ -36,15 +36,15 @@ export default function LoginPage() {
   return (
     <div className="card p-8">
       <div className="mb-6">
-        <h2 className="text-xl font-display font-semibold text-neutral-900">Entrar na plataforma</h2>
-        <p className="text-sm text-neutral-500 mt-1">Acesse sua conta para continuar</p>
+        <h2 className="text-xl font-display font-semibold text-[var(--text-1)]">Entrar na plataforma</h2>
+        <p className="text-sm text-[var(--text-3)] mt-1">Acesse sua conta para continuar</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="label">E-mail</label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
             <input
               type="email"
               value={email}
@@ -59,7 +59,7 @@ export default function LoginPage() {
         <div>
           <label className="label">Senha</label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
@@ -71,7 +71,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(v => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--text-3)]"
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -93,7 +93,7 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <div className="mt-5 pt-5 border-t border-neutral-100 text-center">
+      <div className="mt-5 pt-5 border-t border-[var(--border-light)] text-center">
         <Link href="/auth/forgot-password" className="text-sm text-brand-500 hover:text-brand-600 font-medium">
           Esqueceu sua senha?
         </Link>

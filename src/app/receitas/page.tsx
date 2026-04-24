@@ -24,7 +24,7 @@ export default async function ReceitasPage({ searchParams }: { searchParams: { q
       <div className="page-header">
         <div>
           <h1 className="page-title">Receitas</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">{count ?? 0} receitas</p>
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{count ?? 0} receitas</p>
         </div>
         <Link href="/receitas/novo" className="btn-primary">
           <Plus className="w-4 h-4" /> Nova Receita
@@ -40,7 +40,7 @@ export default async function ReceitasPage({ searchParams }: { searchParams: { q
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(recipes ?? []).length === 0 ? (
-          <div className="col-span-3 card p-12 text-center text-neutral-400">
+          <div className="col-span-3 card p-12 text-center text-[var(--muted)]">
             <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p>Nenhuma receita cadastrada</p>
           </div>
@@ -61,23 +61,23 @@ export default async function ReceitasPage({ searchParams }: { searchParams: { q
                   </div>
                   {r.category && <span className="badge-gray">{r.category}</span>}
                 </div>
-                <h3 className="font-semibold text-neutral-900">{r.name}</h3>
-                <p className="text-sm text-neutral-500 mt-1">
+                <h3 className="font-semibold text-[var(--text-1)]">{r.name}</h3>
+                <p className="text-sm text-[var(--text-3)] mt-1">
                   Rendimento: {r.yield_quantity} {r.yield_unit}
                 </p>
-                <div className="flex gap-4 mt-3 pt-3 border-t border-neutral-100 text-sm">
+                <div className="flex gap-4 mt-3 pt-3 border-t border-[var(--border-light)] text-sm">
                   <div>
-                    <p className="text-xs text-neutral-400">Custo total</p>
-                    <p className="font-semibold text-neutral-800">{formatCurrency(totalCost)}</p>
+                    <p className="text-xs text-[var(--muted)]">Custo total</p>
+                    <p className="font-semibold text-[var(--text-1)]">{formatCurrency(totalCost)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-neutral-400">Por {r.yield_unit}</p>
-                    <p className="font-semibold text-neutral-800">{formatCurrency(costPerUnit)}</p>
+                    <p className="text-xs text-[var(--muted)]">Por {r.yield_unit}</p>
+                    <p className="font-semibold text-[var(--text-1)]">{formatCurrency(costPerUnit)}</p>
                   </div>
                   {r.prep_time_minutes && (
                     <div>
-                      <p className="text-xs text-neutral-400">Preparo</p>
-                      <p className="font-semibold text-neutral-800">{r.prep_time_minutes}min</p>
+                      <p className="text-xs text-[var(--muted)]">Preparo</p>
+                      <p className="font-semibold text-[var(--text-1)]">{r.prep_time_minutes}min</p>
                     </div>
                   )}
                 </div>

@@ -14,7 +14,7 @@ function SubmitButton() {
 export function SupplierForm({ action, defaultValues = {} }: { action: (fd: FormData) => Promise<void>; defaultValues?: Record<string, any> }) {
   return (
     <form action={action} className="card p-6 space-y-4">
-      <h3 className="font-semibold text-neutral-800">Dados do Fornecedor</h3>
+      <h3 className="font-semibold text-[var(--text-1)]">Dados do Fornecedor</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2">
           <label className="label">Nome *</label>

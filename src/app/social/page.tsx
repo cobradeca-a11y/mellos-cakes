@@ -48,7 +48,7 @@ export default async function SocialPage({
       <div className="page-header">
         <div>
           <h1 className="page-title">Redes Sociais</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">{count ?? 0} conteúdos</p>
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{count ?? 0} conteúdos</p>
         </div>
         <Link href="/social/novo" className="btn-primary">
           <Plus className="w-4 h-4" /> Novo Conteúdo
@@ -71,7 +71,7 @@ export default async function SocialPage({
       {/* Kanban-ish grid by status */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(posts ?? []).length === 0 ? (
-          <div className="col-span-3 card p-12 text-center text-neutral-400">
+          <div className="col-span-3 card p-12 text-center text-[var(--muted)]">
             <Calendar className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p>Nenhum conteúdo encontrado</p>
           </div>
@@ -83,19 +83,19 @@ export default async function SocialPage({
                 className="card-hover p-4 block space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-neutral-100 flex items-center justify-center">
-                      <Icon className="w-4 h-4 text-neutral-600" />
+                    <div className="w-7 h-7 rounded-lg bg-[var(--hover)] flex items-center justify-center">
+                      <Icon className="w-4 h-4 text-[var(--text-3)]" />
                     </div>
-                    <span className="text-sm font-medium text-neutral-700 capitalize">{post.channel}</span>
+                    <span className="text-sm font-medium text-[var(--text-2)] capitalize">{post.channel}</span>
                   </div>
                   <span className={statusBadge[post.status] ?? 'badge-gray'}>{post.status}</span>
                 </div>
                 <div>
-                  <p className="font-semibold text-neutral-900 line-clamp-1">{post.title}</p>
-                  {post.caption && <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{post.caption}</p>}
+                  <p className="font-semibold text-[var(--text-1)] line-clamp-1">{post.title}</p>
+                  {post.caption && <p className="text-sm text-[var(--text-3)] mt-1 line-clamp-2">{post.caption}</p>}
                 </div>
                 {post.scheduled_at && (
-                  <div className="flex items-center gap-1.5 text-xs text-neutral-400">
+                  <div className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
                     <Calendar className="w-3.5 h-3.5" />
                     {formatDate(post.scheduled_at)}
                   </div>

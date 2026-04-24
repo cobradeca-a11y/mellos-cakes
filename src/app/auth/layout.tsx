@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <Cookie className="w-5 h-5 text-white" />
           </div>
           <div>
-            <span className="font-display text-2xl font-semibold text-neutral-900">Mellos</span>
+            <span className="font-display text-2xl font-semibold text-[var(--text-1)]">Mellos</span>
             <span className="font-display text-2xl font-semibold text-brand-500">Cakes</span>
           </div>
         </div>

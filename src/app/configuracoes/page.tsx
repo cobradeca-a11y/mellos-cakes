@@ -19,7 +19,7 @@ export default async function ConfiguracoesPage() {
 
       <form action={saveSettings} className="space-y-5">
         <div className="card p-6 space-y-4">
-          <h3 className="font-semibold text-neutral-800">Dados do Negócio</h3>
+          <h3 className="font-semibold text-[var(--text-1)]">Dados do Negócio</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
               <label className="label">Nome da Empresa</label>
@@ -37,7 +37,7 @@ export default async function ConfiguracoesPage() {
         </div>
 
         <div className="card p-6 space-y-4">
-          <h3 className="font-semibold text-neutral-800">Preferências Operacionais</h3>
+          <h3 className="font-semibold text-[var(--text-1)]">Preferências Operacionais</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="label">Moeda</label>
@@ -51,7 +51,7 @@ export default async function ConfiguracoesPage() {
               <label className="label">Markup Padrão (multiplicador)</label>
               <input type="number" step="0.1" min="1" name="default_markup"
                 defaultValue={settings?.default_markup ?? '2.5'} className="input" />
-              <p className="text-xs text-neutral-400 mt-1">Ex: 2.5 = 150% de margem sobre o custo</p>
+              <p className="text-xs text-[var(--muted)] mt-1">Ex: 2.5 = 150% de margem sobre o custo</p>
             </div>
           </div>
         </div>

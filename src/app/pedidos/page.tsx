@@ -51,7 +51,7 @@ export default async function PedidosPage({
       <div className="page-header">
         <div>
           <h1 className="page-title">Pedidos</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">{count ?? 0} pedidos encontrados</p>
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{count ?? 0} pedidos encontrados</p>
         </div>
         <Link href="/pedidos/novo" className="btn-primary">
           <Plus className="w-4 h-4" /> Novo Pedido
@@ -62,7 +62,7 @@ export default async function PedidosPage({
       <div className="card p-4">
         <form className="flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-48">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
             <input name="q" defaultValue={q} placeholder="Buscar por número..." className="input pl-9" />
           </div>
           <select name="status" defaultValue={status} className="input w-auto min-w-40">
@@ -89,7 +89,7 @@ export default async function PedidosPage({
           <tbody>
             {(orders ?? []).length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-12 text-neutral-400">
+                <td colSpan={7} className="text-center py-12 text-[var(--muted)]">
                   <ClipboardList className="w-10 h-10 mx-auto mb-3 opacity-30" />
                   <p>Nenhum pedido encontrado</p>
                 </td>
@@ -98,9 +98,9 @@ export default async function PedidosPage({
               (orders ?? []).map((o: any) => (
                 <tr key={o.id}>
                   <td>
-                    <span className="font-mono text-sm font-medium text-neutral-800">#{o.order_number}</span>
+                    <span className="font-mono text-sm font-medium text-[var(--text-1)]">#{o.order_number}</span>
                   </td>
-                  <td className="font-medium text-neutral-900">{o.customers?.name ?? '—'}</td>
+                  <td className="font-medium text-[var(--text-1)]">{o.customers?.name ?? '—'}</td>
                   <td>{formatDate(o.delivery_date)}</td>
                   <td><span className={statusBadge[o.status] ?? 'badge-gray'}>{o.status.replace('_', ' ')}</span></td>
                   <td className="font-semibold">{formatCurrency(o.total_amount)}</td>
@@ -123,8 +123,8 @@ export default async function PedidosPage({
           </tbody>
         </table>
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-100">
-            <p className="text-sm text-neutral-500">Página {page} de {totalPages}</p>
+          <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border-light)]">
+            <p className="text-sm text-[var(--text-3)]">Página {page} de {totalPages}</p>
             <div className="flex gap-2">
               {page > 1 && <Link href={`?q=${q}&status=${status}&page=${page-1}`} className="btn-secondary text-xs">← Anterior</Link>}
               {page < totalPages && <Link href={`?q=${q}&status=${status}&page=${page+1}`} className="btn-secondary text-xs">Próxima →</Link>}
