@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
+  darkMode: 'class',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -22,32 +23,6 @@ const config: Config = {
           900: '#722618',
           950: '#3d100a',
         },
-        rose: {
-          50:  '#fff1f3',
-          100: '#ffe1e6',
-          200: '#ffc8d2',
-          300: '#ffa0b3',
-          400: '#ff6b8a',
-          500: '#f83d65',
-          600: '#e51d4a',
-          700: '#c21140',
-          800: '#a2133c',
-          900: '#8b1439',
-          950: '#4e051b',
-        },
-        neutral: {
-          50:  '#fafaf9',
-          100: '#f5f5f4',
-          200: '#e7e5e4',
-          300: '#d6d3d1',
-          400: '#a8a29e',
-          500: '#78716c',
-          600: '#57534e',
-          700: '#44403c',
-          800: '#292524',
-          900: '#1c1917',
-          950: '#0c0a09',
-        },
       },
       fontFamily: {
         display: ['var(--font-display)', 'Georgia', 'serif'],
@@ -55,13 +30,7 @@ const config: Config = {
         mono: ['var(--font-mono)', 'monospace'],
       },
       boxShadow: {
-        'card': '0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06)',
-        'card-hover': '0 4px 12px 0 rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06)',
-        'modal': '0 20px 60px -10px rgb(0 0 0 / 0.25)',
-      },
-      borderRadius: {
-        '4': '1rem',
-        '5': '1.25rem',
+        'modal': '0 20px 60px -10px rgb(0 0 0 / 0.3)',
       },
     },
   },
