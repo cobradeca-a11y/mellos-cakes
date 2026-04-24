@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { PrintStyles } from './PrintStyles'
 import { formatCurrency } from '@/lib/utils'
 import {
   TrendingUp, Calendar, BarChart2, Package, Users, Download,
@@ -35,27 +36,17 @@ function RankRow({ label, value, max, color, suffix = 'x', extra = '' }:
 // ── Botão exportar PDF ──────────────────────────────────
 function ExportButton({ tabName }: { tabName: string }) {
   const handlePrint = () => {
-    const style = document.createElement('style')
-    style.innerHTML = `
-      @media print {
-        body > *:not(#print-area) { display: none !important; }
-        #print-area { display: block !important; }
-        .no-print { display: none !important; }
-        @page { margin: 1.5cm; size: A4 portrait; }
-        body { background: white !important; color: black !important; font-family: Arial, sans-serif; }
-        .card { border: 1px solid #e5e7eb !important; background: white !important; border-radius: 8px; break-inside: avoid; }
-      }
-    `
-    document.head.appendChild(style)
-    const area = document.getElementById('print-area')
-    if (area) area.id = 'print-area-active'
-    document.getElementById('print-area-active')!.style.display = 'block'
-    window.print()
-    document.head.removeChild(style)
+    // Remove dark class before print, restore after
+    const html = document.documentElement
+    const wasDark = html.classList.contains('dark')
+    if (wasDark) html.classList.remove('dark')
+
     setTimeout(() => {
-      const el = document.getElementById('print-area-active')
-      if (el) el.id = 'print-area'
-    }, 500)
+      window.print()
+      setTimeout(() => {
+        if (wasDark) html.classList.add('dark')
+      }, 500)
+    }, 80)
   }
 
   return (
@@ -96,6 +87,7 @@ export function RelatoriosTabs({ data, meses, anoAtual }: {
 
   return (
     <div className="space-y-5">
+      <PrintStyles />
       {/* Header com filtros */}
       <div className="page-header">
         <div>
@@ -344,17 +336,7 @@ export function RelatoriosTabs({ data, meses, anoAtual }: {
 
       </div>
 
-      {/* CSS de impressão */}
-      <style jsx global>{`
-        @media print {
-          .no-print { display: none !important; }
-          nav, aside, header { display: none !important; }
-          main { margin: 0 !important; padding: 0 !important; }
-          body { background: white !important; }
-          .card { border: 1px solid #e5e7eb !important; background: white !important; }
-          * { color-adjust: exact; -webkit-print-color-adjust: exact; }
-        }
-      `}</style>
+
     </div>
   )
 }
