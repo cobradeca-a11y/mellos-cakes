@@ -4,9 +4,12 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+const BUSINESS_ID = '1d8de479-7996-4868-b2d1-c277b5a7fb73'
+
 export async function createEntry(formData: FormData) {
   const supabase = createClient()
   const data = {
+    business_id: BUSINESS_ID,
     type: formData.get('type') as string,
     category: formData.get('category') as string,
     description: formData.get('description') as string,
