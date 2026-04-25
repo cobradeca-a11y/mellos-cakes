@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'edge'
 
-// Usa a API Anthropic — chave configurada via variável de ambiente ANTHROPIC_API_KEY
-// Se não tiver chave, usa fallback com conteúdo de demonstração
-const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY ?? ''
+const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY ?? ''
 
 const SYSTEM = `Você é especialista em marketing digital para confeitarias artesanais brasileiras.
 Cria conteúdo real, direto e humano para vender bolos, tortas e doces.
@@ -60,8 +58,7 @@ ${conteudo_original?`Original:\n${conteudo_original}`:''}
 JSON exato (sem nada fora):
 {"titulo":"...","texto_principal":"...","legenda":"...","hashtags":"...","cta":"...","roteiro":${isVideo?'"..."':'null'},"slides":${isCarrossel?'[{"titulo":"","texto":""}]':'null'},"stories":${isStory?'[{"tela":1,"texto":"","acao":""}]':'null'},"melhor_rede":"...","melhor_horario":"...","dica":"..."}`
 
-    if (!ANTHROPIC_KEY) {
-      // Fallback demonstrativo quando não há chave
+    if (!OPENROUTER_KEY) {
       return NextResponse.json({
         ok: true,
         conteudo: {
@@ -84,24 +81,28 @@ JSON exato (sem nada fora):
           ] : null,
           melhor_rede: 'Instagram',
           melhor_horario: '18h–21h',
-          dica: '⚠️ Configure a variável ANTHROPIC_API_KEY na Vercel para geração real com IA.',
+          dica: '⚠️ Configure a variável OPENROUTER_API_KEY na Vercel para geração real com IA.',
         },
-        aviso: 'Conteúdo de demonstração. Configure ANTHROPIC_API_KEY na Vercel para IA real.'
+        aviso: 'Conteúdo de demonstração. Configure OPENROUTER_API_KEY na Vercel para IA real.'
       })
     }
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // ✅ OpenRouter — formato OpenAI, modelos gratuitos disponíveis
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key':    ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${OPENROUTER_KEY}`,
+        'HTTP-Referer': 'https://seusite.com.br', // opcional mas recomendado
+        'X-Title': 'Gerador de Conteúdo',          // aparece no dashboard do OpenRouter
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'google/gemma-3-27b-it:free', // modelo gratuito — veja opções abaixo
         max_tokens: 1500,
-        system: SYSTEM,
-        messages: [{ role:'user', content: prompt }],
+        messages: [
+          { role: 'system', content: SYSTEM },
+          { role: 'user',   content: prompt },
+        ],
       }),
     })
 
@@ -111,7 +112,7 @@ JSON exato (sem nada fora):
     }
 
     const data = await response.json()
-    const rawText = data.content?.[0]?.text ?? '{}'
+    const rawText = data.choices?.[0]?.message?.content ?? '{}'
 
     let parsed: any
     try { parsed = JSON.parse(rawText) }
