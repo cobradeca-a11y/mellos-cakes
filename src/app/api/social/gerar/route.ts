@@ -13,6 +13,8 @@ Priorize WhatsApp como canal de conversão, mas entregue também direção criat
 Nunca invente informação que o usuário não forneceu: preço, desconto, endereço, estoque, prazo ou sabor não informado.
 Use linguagem simples, comercial e próxima, sem exageros vazios.
 HASHTAGS: sempre comece cada hashtag com #, separe por espaço e nunca junte palavras sem #.
+PROPAGANDA: quando indicar propaganda, explique claramente o que fazer, por que fazer, qual produto destacar, qual argumento usar, qual canal usar, qual horário usar e qual ação o cliente deve tomar.
+CTA significa chamada para ação: uma frase objetiva dizendo o próximo passo do cliente, por exemplo: pedir pelo WhatsApp, responder a enquete, reservar o sabor, chamar para encomendar.
 RESPONDA APENAS EM JSON VÁLIDO. Sem markdown, sem texto fora do JSON.`
 
 const MOTORES: Record<string,string> = {
@@ -32,6 +34,22 @@ const FORMATOS: Record<string,string> = {
   shorts:   'Roteiro de YouTube Shorts com cenas, narração e CTA',
   mensagem: 'Mensagem de WhatsApp direta e persuasiva',
 }
+
+const INTELIGENCIA_MARKETING_BASE = `Base da Inteligência de Marketing da Mello's Cakes:
+- O objetivo é transformar dados de produtos, pedidos, campanhas e calendário comercial em orientação prática de venda.
+- Toda propaganda deve ser explicativa: apresentar o produto, mostrar o diferencial, indicar para quem serve, explicar como pedir e finalizar com chamada para ação.
+- Priorizar produto disponível, produto em destaque, produto com maior apelo visual ou produto adequado à data comercial.
+- Segunda: cardápio, bastidor e planejamento da semana.
+- Terça: explicar sabores, camadas, conservação e diferenciais.
+- Quarta: prova social, bastidor, feedback e confiança.
+- Quinta: antecipar pedidos de sexta e sábado.
+- Sexta: venda direta explicativa, desejo visual e WhatsApp.
+- Sábado: consumo imediato, disponibilidade e reforço visual.
+- Domingo: família, sobremesa, afeto e encomendas da semana.
+- Para lançamento ou sabor novo: usar prévia, enquete, contagem regressiva, anúncio oficial e chamada para reserva.
+- Para datas comemorativas: iniciar campanha antes da data, alternando bastidor, desejo visual, prova social, explicação do produto e venda direta.
+- Não usar falsa escassez. Só falar últimas unidades, desconto ou prazo se o usuário informar.
+`
 
 type RequestPayload = {
   motor?: string
@@ -100,6 +118,7 @@ function enhanceContent(content: any, body: RequestPayload) {
     melhor_rede: content?.melhor_rede ?? (canal === 'youtube' ? 'YouTube Shorts' : canal.charAt(0).toUpperCase() + canal.slice(1)),
     melhor_horario: content?.melhor_horario ?? '18h–21h',
     dica: content?.dica ?? 'Use foto clara, aproximada e com foco nas camadas/recheio para aumentar desejo.',
+    orientacao_propaganda: content?.orientacao_propaganda ?? `Divulgue ${produto} explicando sabor, textura, diferencial do pote e como pedir pelo WhatsApp.`,
     prompt_imagem: content?.prompt_imagem ?? `Foto profissional e apetitosa de ${produto}, embalagem limpa, iluminação natural suave, fundo de confeitaria artesanal, foco nas camadas e textura cremosa, composição vertical para ${canal}, sem textos na imagem.`,
     texto_na_arte: content?.texto_na_arte ?? `Hoje tem ${produto}`,
     fundo_visual: content?.fundo_visual ?? 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto.',
@@ -148,6 +167,7 @@ function getFallbackContent(body: RequestPayload) {
     melhor_rede: canal === 'youtube' ? 'YouTube Shorts' : canal.charAt(0).toUpperCase() + canal.slice(1),
     melhor_horario: '18h–21h',
     dica: 'Use foto clara, aproximada e com foco nas camadas/recheio para aumentar desejo.',
+    orientacao_propaganda: `Propaganda recomendada: mostre ${produto}, explique o sabor e as camadas, destaque que é artesanal e finalize com pedido pelo WhatsApp.`,
     prompt_imagem: `Foto profissional e apetitosa de ${produto}, embalagem limpa, iluminação natural suave, fundo de confeitaria artesanal, foco nas camadas e textura cremosa, composição vertical para ${canal}, sem textos na imagem.`,
     texto_na_arte: isLaunch ? `Novo sabor: ${produto}` : `Hoje tem ${produto}`,
     fundo_visual: 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto.',
@@ -225,6 +245,7 @@ export async function POST(req: NextRequest) {
       melhor_rede: '...',
       melhor_horario: '...',
       dica: '...',
+      orientacao_propaganda: '...',
       prompt_imagem: '...',
       texto_na_arte: '...',
       fundo_visual: '...',
@@ -237,12 +258,14 @@ export async function POST(req: NextRequest) {
       checklist_publicacao: ['...', '...', '...'],
     }
 
-    const prompt = `Motor estratégico: ${MOTORES[motor]??MOTORES.venda}
+    const prompt = `${INTELIGENCIA_MARKETING_BASE}
+
+Motor estratégico: ${MOTORES[motor]??MOTORES.venda}
 Rede: ${canal} | Formato: ${FORMATOS[formato]??'Post'}
 Produto: ${produto} | Tipo: ${tipo_produto??'confeitaria'}
 Público: ${publico}
 Objetivo: ${objetivo??'gerar vendas'}
-Tom: ${tom} | CTA: ${cta??'Encomendar pelo WhatsApp'}
+Tom: ${tom} | CTA/chamada para ação desejada: ${cta??'Encomendar pelo WhatsApp'}
 WhatsApp: ${link_whatsapp??''} | Observações: ${observacoes??''}
 ${conteudo_original?`Conteúdo original para reaproveitar:\n${conteudo_original}`:''}
 
@@ -251,13 +274,14 @@ Inclua:
 1. Texto principal persuasivo, humano e direto.
 2. Legenda pronta para publicar.
 3. Hashtags obrigatoriamente separadas por espaço, cada uma começando com #.
-4. CTA claro para WhatsApp.
+4. CTA claro para WhatsApp. Explique o próximo passo do cliente.
 5. Melhor horário para postar, com justificativa curta.
-6. Prompt visual para gerar/criar fundo/imagem da publicação.
-7. Texto curto para colocar dentro da arte, se fizer sentido.
-8. Direção de fundo visual: cores, iluminação, composição e destaque do produto.
-9. Interações: enquete, opções de resposta, caixa de pergunta e contagem regressiva apenas se for lançamento/sabor novo.
-10. Checklist de publicação.
+6. Orientação de propaganda bem explicativa: o que destacar, por que destacar, canal, horário e ação esperada.
+7. Prompt visual para gerar/criar fundo/imagem da publicação.
+8. Texto curto para colocar dentro da arte, se fizer sentido.
+9. Direção de fundo visual: cores, iluminação, composição e destaque do produto.
+10. Interações: enquete, opções de resposta, caixa de pergunta e contagem regressiva apenas se for lançamento/sabor novo.
+11. Checklist de publicação.
 
 JSON exato (sem nada fora):
 ${JSON.stringify(jsonShape)}
