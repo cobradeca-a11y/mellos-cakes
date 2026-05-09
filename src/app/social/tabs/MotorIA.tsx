@@ -42,17 +42,31 @@ interface Props {
   recommendation?: Recommendation
 }
 
+function safeText(value: any): string {
+  if (value === null || value === undefined) return ''
+  if (typeof value === 'string') return value
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value)
+  if (Array.isArray(value)) return value.map(safeText).filter(Boolean).join('\n')
+  if (typeof value === 'object') {
+    return Object.entries(value)
+      .map(([key, val]) => `${key.replaceAll('_', ' ')}: ${safeText(val)}`)
+      .filter(line => !line.endsWith(': '))
+      .join('\n')
+  }
+  return String(value)
+}
+
 function formatContentForCopy(resultado: any) {
   const blocks = [
-    resultado?.texto_principal,
-    resultado?.legenda,
-    resultado?.hashtags,
-    resultado?.cta,
-    resultado?.melhor_horario ? `Melhor horário: ${resultado.melhor_horario}` : '',
-    resultado?.orientacao_propaganda ? `Orientação de propaganda: ${resultado.orientacao_propaganda}` : '',
-    resultado?.prompt_imagem ? `Prompt visual: ${resultado.prompt_imagem}` : '',
-    resultado?.texto_na_arte ? `Texto na arte: ${resultado.texto_na_arte}` : '',
-    resultado?.fundo_visual ? `Fundo visual: ${resultado.fundo_visual}` : '',
+    safeText(resultado?.texto_principal),
+    safeText(resultado?.legenda),
+    safeText(resultado?.hashtags),
+    safeText(resultado?.cta),
+    resultado?.melhor_horario ? `Melhor horário: ${safeText(resultado.melhor_horario)}` : '',
+    resultado?.orientacao_propaganda ? `Orientação de propaganda: ${safeText(resultado.orientacao_propaganda)}` : '',
+    resultado?.prompt_imagem ? `Prompt visual: ${safeText(resultado.prompt_imagem)}` : '',
+    resultado?.texto_na_arte ? `Texto na arte: ${safeText(resultado.texto_na_arte)}` : '',
+    resultado?.fundo_visual ? `Fundo visual: ${safeText(resultado.fundo_visual)}` : '',
   ].filter(Boolean)
 
   return blocks.join('\n\n')
@@ -109,10 +123,10 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
     if (!resultado) return
     await supabase.from('content_posts').insert({
       business_id: BUSINESS_ID,
-      title:       resultado.titulo ?? produto,
-      caption:     resultado.legenda,
-      hashtags:    resultado.hashtags,
-      cta:         resultado.cta,
+      title:       safeText(resultado.titulo) || produto,
+      caption:     safeText(resultado.legenda),
+      hashtags:    safeText(resultado.hashtags),
+      cta:         safeText(resultado.cta),
       channel:     canal,
       status:      'rascunho',
       format:      formato,
@@ -123,17 +137,17 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
       cta_link:    link,
       notes: [
         obs,
-        resultado.orientacao_propaganda ? `Orientação de propaganda: ${resultado.orientacao_propaganda}` : '',
-        resultado.prompt_imagem ? `Prompt visual: ${resultado.prompt_imagem}` : '',
-        resultado.texto_na_arte ? `Texto na arte: ${resultado.texto_na_arte}` : '',
-        resultado.fundo_visual ? `Fundo visual: ${resultado.fundo_visual}` : '',
+        resultado.orientacao_propaganda ? `Orientação de propaganda: ${safeText(resultado.orientacao_propaganda)}` : '',
+        resultado.prompt_imagem ? `Prompt visual: ${safeText(resultado.prompt_imagem)}` : '',
+        resultado.texto_na_arte ? `Texto na arte: ${safeText(resultado.texto_na_arte)}` : '',
+        resultado.fundo_visual ? `Fundo visual: ${safeText(resultado.fundo_visual)}` : '',
         resultado.interacoes ? `Interações: ${JSON.stringify(resultado.interacoes)}` : '',
         resultado.checklist_publicacao ? `Checklist: ${JSON.stringify(resultado.checklist_publicacao)}` : '',
       ].filter(Boolean).join('\n\n'),
-      script:      resultado.roteiro,
+      script:      safeText(resultado.roteiro),
       carousel_slides: resultado.slides,
       stories_sequence: resultado.stories,
-      best_time:   resultado.melhor_horario,
+      best_time:   safeText(resultado.melhor_horario),
     })
     setSaved(true)
     onSaved?.()
@@ -255,42 +269,42 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
             {resultado.texto_principal && (
               <div className="card p-4 md:col-span-2">
                 <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>TEXTO PRINCIPAL</p>
-                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-1)' }}>{resultado.texto_principal}</p>
+                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-1)' }}>{safeText(resultado.texto_principal)}</p>
               </div>
             )}
 
             {resultado.legenda && (
               <div className="card p-4">
                 <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>LEGENDA</p>
-                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{resultado.legenda}</p>
+                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.legenda)}</p>
               </div>
             )}
 
             {resultado.hashtags && (
               <div className="card p-4">
                 <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>HASHTAGS</p>
-                <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color:'#2563eb' }}>{resultado.hashtags}</p>
+                <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color:'#2563eb' }}>{safeText(resultado.hashtags)}</p>
               </div>
             )}
 
             {resultado.cta && (
               <div className="card p-4">
                 <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>CHAMADA PARA AÇÃO</p>
-                <p className="text-sm font-medium" style={{ color:'var(--brand)' }}>{resultado.cta}</p>
+                <p className="text-sm font-medium" style={{ color:'var(--brand)' }}>{safeText(resultado.cta)}</p>
               </div>
             )}
 
             <div className="card p-4">
               <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>SUGESTÕES DA IA</p>
-              <p className="text-xs" style={{ color:'var(--text-3)' }}>📱 Rede: <strong>{resultado.melhor_rede}</strong></p>
-              <p className="text-xs mt-1" style={{ color:'var(--text-3)' }}>🕐 Horário: <strong>{resultado.melhor_horario}</strong></p>
-              {resultado.dica && <p className="text-xs mt-1 italic" style={{ color:'var(--muted)' }}>💡 {resultado.dica}</p>}
+              <p className="text-xs" style={{ color:'var(--text-3)' }}>📱 Rede: <strong>{safeText(resultado.melhor_rede)}</strong></p>
+              <p className="text-xs mt-1" style={{ color:'var(--text-3)' }}>🕐 Horário: <strong>{safeText(resultado.melhor_horario)}</strong></p>
+              {resultado.dica && <p className="text-xs mt-1 italic" style={{ color:'var(--muted)' }}>💡 {safeText(resultado.dica)}</p>}
             </div>
 
             {resultado.orientacao_propaganda && (
               <div className="card p-4 md:col-span-2">
                 <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>ORIENTAÇÃO DE PROPAGANDA</p>
-                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{resultado.orientacao_propaganda}</p>
+                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.orientacao_propaganda)}</p>
               </div>
             )}
 
@@ -300,19 +314,19 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
                 {resultado.prompt_imagem && (
                   <div className="mb-3">
                     <p className="text-xs font-semibold mb-1" style={{ color:'var(--text-3)' }}>Prompt para imagem/fundo</p>
-                    <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{resultado.prompt_imagem}</p>
+                    <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.prompt_imagem)}</p>
                   </div>
                 )}
                 {resultado.texto_na_arte && (
                   <div className="mb-3">
                     <p className="text-xs font-semibold mb-1" style={{ color:'var(--text-3)' }}>Texto para colocar na arte</p>
-                    <p className="text-sm font-semibold" style={{ color:'var(--brand)' }}>{resultado.texto_na_arte}</p>
+                    <p className="text-sm font-semibold" style={{ color:'var(--brand)' }}>{safeText(resultado.texto_na_arte)}</p>
                   </div>
                 )}
                 {resultado.fundo_visual && (
                   <div>
                     <p className="text-xs font-semibold mb-1" style={{ color:'var(--text-3)' }}>Fundo / composição</p>
-                    <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{resultado.fundo_visual}</p>
+                    <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.fundo_visual)}</p>
                   </div>
                 )}
               </div>
@@ -321,12 +335,12 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
             {resultado.interacoes && (
               <div className="card p-4 md:col-span-2">
                 <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>INTERAÇÕES PARA STORIES / ENGAJAMENTO</p>
-                {resultado.interacoes.enquete && <p className="text-sm" style={{ color:'var(--text-2)' }}>📊 Enquete: <strong>{resultado.interacoes.enquete}</strong></p>}
+                {resultado.interacoes.enquete && <p className="text-sm" style={{ color:'var(--text-2)' }}>📊 Enquete: <strong>{safeText(resultado.interacoes.enquete)}</strong></p>}
                 {Array.isArray(resultado.interacoes.opcoes) && resultado.interacoes.opcoes.length > 0 && (
-                  <p className="text-sm mt-1" style={{ color:'var(--text-2)' }}>Opções: {resultado.interacoes.opcoes.join(' / ')}</p>
+                  <p className="text-sm mt-1" style={{ color:'var(--text-2)' }}>Opções: {resultado.interacoes.opcoes.map(safeText).join(' / ')}</p>
                 )}
-                {resultado.interacoes.caixa_pergunta && <p className="text-sm mt-1" style={{ color:'var(--text-2)' }}>💬 Caixa de pergunta: {resultado.interacoes.caixa_pergunta}</p>}
-                {resultado.interacoes.contagem_regressiva && <p className="text-sm mt-1" style={{ color:'var(--brand)' }}>⏳ Contagem regressiva: {resultado.interacoes.contagem_regressiva}</p>}
+                {resultado.interacoes.caixa_pergunta && <p className="text-sm mt-1" style={{ color:'var(--text-2)' }}>💬 Caixa de pergunta: {safeText(resultado.interacoes.caixa_pergunta)}</p>}
+                {resultado.interacoes.contagem_regressiva && <p className="text-sm mt-1" style={{ color:'var(--brand)' }}>⏳ Contagem regressiva: {safeText(resultado.interacoes.contagem_regressiva)}</p>}
               </div>
             )}
 
@@ -334,8 +348,8 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
               <div className="card p-4 md:col-span-2">
                 <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>CHECKLIST DE PUBLICAÇÃO</p>
                 <ul className="space-y-1">
-                  {resultado.checklist_publicacao.map((item: string, i: number) => (
-                    <li key={i} className="text-sm" style={{ color:'var(--text-2)' }}>✓ {item}</li>
+                  {resultado.checklist_publicacao.map((item: any, i: number) => (
+                    <li key={i} className="text-sm" style={{ color:'var(--text-2)' }}>✓ {safeText(item)}</li>
                   ))}
                 </ul>
               </div>
@@ -344,7 +358,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
             {resultado.roteiro && (
               <div className="card p-4 md:col-span-2">
                 <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>ROTEIRO DO VÍDEO</p>
-                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{resultado.roteiro}</p>
+                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.roteiro)}</p>
               </div>
             )}
 
@@ -356,9 +370,9 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
                     <div key={i} className="rounded-xl p-3 text-center"
                       style={{ background:'var(--hover)', border:'1px solid var(--border)' }}>
                       <p className="text-xs font-bold mb-1" style={{ color:'var(--brand)' }}>Slide {i+1}</p>
-                      <p className="text-sm font-semibold" style={{ color:'var(--text-1)' }}>{s.titulo}</p>
-                      <p className="text-xs mt-1" style={{ color:'var(--text-3)' }}>{s.texto}</p>
-                      {s.intencao && <p className="text-[11px] mt-2 italic" style={{ color:'var(--muted)' }}>Objetivo: {s.intencao}</p>}
+                      <p className="text-sm font-semibold" style={{ color:'var(--text-1)' }}>{safeText(s.titulo)}</p>
+                      <p className="text-xs mt-1" style={{ color:'var(--text-3)' }}>{safeText(s.texto)}</p>
+                      {s.intencao && <p className="text-[11px] mt-2 italic" style={{ color:'var(--muted)' }}>Objetivo: {safeText(s.intencao)}</p>}
                     </div>
                   ))}
                 </div>
@@ -372,10 +386,10 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
                   {resultado.stories.map((s: any, i: number) => (
                     <div key={i} className="shrink-0 w-44 rounded-xl p-3 text-center"
                       style={{ background:'var(--hover)', border:'1px solid var(--border)', minHeight:'130px' }}>
-                      <p className="text-xs font-bold mb-2" style={{ color:'var(--brand)' }}>Tela {s.tela ?? i+1}</p>
-                      <p className="text-xs" style={{ color:'var(--text-2)' }}>{s.texto}</p>
-                      {s.acao && <p className="text-xs mt-2 italic" style={{ color:'var(--muted)' }}>👆 {s.acao}</p>}
-                      {s.sticker && <p className="text-xs mt-2" style={{ color:'var(--brand)' }}>Sticker: {s.sticker}</p>}
+                      <p className="text-xs font-bold mb-2" style={{ color:'var(--brand)' }}>Tela {safeText(s.tela) || i+1}</p>
+                      <p className="text-xs" style={{ color:'var(--text-2)' }}>{safeText(s.texto)}</p>
+                      {s.acao && <p className="text-xs mt-2 italic" style={{ color:'var(--muted)' }}>👆 {safeText(s.acao)}</p>}
+                      {s.sticker && <p className="text-xs mt-2" style={{ color:'var(--brand)' }}>Sticker: {safeText(s.sticker)}</p>}
                     </div>
                   ))}
                 </div>
