@@ -100,6 +100,25 @@ function normalizeHashtags(value: unknown) {
   return raw.startsWith('#') ? raw : `#${raw}`
 }
 
+function textValue(value: unknown, fallback = '') {
+  if (value === null || value === undefined) return fallback
+  if (typeof value === 'string') return value
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value)
+  if (Array.isArray(value)) {
+    return value
+      .map(item => textValue(item))
+      .filter(Boolean)
+      .join('\n')
+  }
+  if (typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>)
+      .map(([key, val]) => `${key.replaceAll('_', ' ')}: ${textValue(val)}`)
+      .filter(line => !line.endsWith(': '))
+      .join('\n')
+  }
+  return fallback
+}
+
 function enhanceContent(content: any, body: RequestPayload) {
   const canal = body.canal ?? 'instagram'
   const produto = body.produto ?? 'produto'
@@ -107,21 +126,21 @@ function enhanceContent(content: any, body: RequestPayload) {
   const isLaunch = /lançamento|novo sabor|sabor novo|novidade|estreia/i.test(`${body.observacoes ?? ''} ${produto}`)
 
   return {
-    titulo: content?.titulo ?? `${produto} — Conteúdo profissional`,
-    texto_principal: content?.texto_principal ?? `🎂 ${produto} feito com capricho para deixar seu dia mais gostoso.`,
-    legenda: content?.legenda ?? `Seu ${produto} está esperando por você. Faça sua encomenda pelo WhatsApp!`,
+    titulo: textValue(content?.titulo, `${produto} — Conteúdo profissional`),
+    texto_principal: textValue(content?.texto_principal, `🎂 ${produto} feito com capricho para deixar seu dia mais gostoso.`),
+    legenda: textValue(content?.legenda, `Seu ${produto} está esperando por você. Faça sua encomenda pelo WhatsApp!`),
     hashtags: normalizeHashtags(content?.hashtags),
-    cta: content?.cta ?? body.cta ?? 'Pedir pelo WhatsApp agora',
-    roteiro: content?.roteiro ?? null,
+    cta: textValue(content?.cta, body.cta ?? 'Pedir pelo WhatsApp agora'),
+    roteiro: content?.roteiro ? textValue(content.roteiro) : null,
     slides: content?.slides ?? null,
     stories: content?.stories ?? null,
-    melhor_rede: content?.melhor_rede ?? (canal === 'youtube' ? 'YouTube Shorts' : canal.charAt(0).toUpperCase() + canal.slice(1)),
-    melhor_horario: content?.melhor_horario ?? '18h–21h',
-    dica: content?.dica ?? 'Use foto clara, aproximada e com foco nas camadas/recheio para aumentar desejo.',
-    orientacao_propaganda: content?.orientacao_propaganda ?? `Divulgue ${produto} explicando sabor, textura, diferencial do pote e como pedir pelo WhatsApp.`,
-    prompt_imagem: content?.prompt_imagem ?? `Foto profissional e apetitosa de ${produto}, embalagem limpa, iluminação natural suave, fundo de confeitaria artesanal, foco nas camadas e textura cremosa, composição vertical para ${canal}, sem textos na imagem.`,
-    texto_na_arte: content?.texto_na_arte ?? `Hoje tem ${produto}`,
-    fundo_visual: content?.fundo_visual ?? 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto.',
+    melhor_rede: textValue(content?.melhor_rede, canal === 'youtube' ? 'YouTube Shorts' : canal.charAt(0).toUpperCase() + canal.slice(1)),
+    melhor_horario: textValue(content?.melhor_horario, '18h–21h'),
+    dica: textValue(content?.dica, 'Use foto clara, aproximada e com foco nas camadas/recheio para aumentar desejo.'),
+    orientacao_propaganda: textValue(content?.orientacao_propaganda, `Divulgue ${produto} explicando sabor, textura, diferencial do pote e como pedir pelo WhatsApp.`),
+    prompt_imagem: textValue(content?.prompt_imagem, `Foto profissional e apetitosa de ${produto}, embalagem limpa, iluminação natural suave, fundo de confeitaria artesanal, foco nas camadas e textura cremosa, composição vertical para ${canal}, sem textos na imagem.`),
+    texto_na_arte: textValue(content?.texto_na_arte, `Hoje tem ${produto}`),
+    fundo_visual: textValue(content?.fundo_visual, 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto.'),
     interacoes: content?.interacoes ?? {
       enquete: `Você provaria ${produto} hoje?`,
       opcoes: ['Sim, eu quero!', 'Quero ver sabores'],
@@ -248,7 +267,7 @@ export async function POST(req: NextRequest) {
       orientacao_propaganda: '...',
       prompt_imagem: '...',
       texto_na_arte: '...',
-      fundo_visual: '...',
+      fundo_visual: 'descreva em texto corrido; não retorne objeto',
       interacoes: {
         enquete: '...',
         opcoes: ['...', '...'],
@@ -279,7 +298,7 @@ Inclua:
 6. Orientação de propaganda bem explicativa: o que destacar, por que destacar, canal, horário e ação esperada.
 7. Prompt visual para gerar/criar fundo/imagem da publicação.
 8. Texto curto para colocar dentro da arte, se fizer sentido.
-9. Direção de fundo visual: cores, iluminação, composição e destaque do produto.
+9. Direção de fundo visual em texto corrido: cores, iluminação, composição e destaque do produto. Não retorne fundo_visual como objeto.
 10. Interações: enquete, opções de resposta, caixa de pergunta e contagem regressiva apenas se for lançamento/sabor novo.
 11. Checklist de publicação.
 
