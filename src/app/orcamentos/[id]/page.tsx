@@ -26,7 +26,11 @@ export default async function OrcamentoDetailPage({ params }: { params: { id: st
           <Link href="/orcamentos" className="btn-ghost"><ArrowLeft className="w-4 h-4" /></Link>
           <div>
             <h1 className="page-title font-mono">#{quote.quote_number}</h1>
+<<<<<<< HEAD
             <p className="text-sm text-neutral-500">{(quote.customers as any)?.name ?? 'Sem cliente'}</p>
+=======
+            <p className="text-sm text-[var(--text-3)]">{(quote.customers as any)?.name ?? 'Sem cliente'}</p>
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
           </div>
         </div>
         <div className="flex gap-2">
@@ -56,6 +60,7 @@ export default async function OrcamentoDetailPage({ params }: { params: { id: st
       <div className="card p-5 space-y-3">
         <div className="flex flex-wrap gap-4 text-sm">
           <div>
+<<<<<<< HEAD
             <p className="text-xs text-neutral-500 mb-1">Status</p>
             <span className={statusBadge[quote.status]}>{quote.status}</span>
           </div>
@@ -65,29 +70,57 @@ export default async function OrcamentoDetailPage({ params }: { params: { id: st
           </div>
           <div>
             <p className="text-xs text-neutral-500 mb-1">Sinal</p>
+=======
+            <p className="text-xs text-[var(--text-3)] mb-1">Status</p>
+            <span className={statusBadge[quote.status]}>{quote.status}</span>
+          </div>
+          <div>
+            <p className="text-xs text-[var(--text-3)] mb-1">Total</p>
+            <p className="font-bold text-brand-500">{formatCurrency(quote.total_amount)}</p>
+          </div>
+          <div>
+            <p className="text-xs text-[var(--text-3)] mb-1">Sinal</p>
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
             <p className="font-semibold">{formatCurrency(quote.deposit_required ?? 0)}</p>
           </div>
           {quote.valid_until && (
             <div>
+<<<<<<< HEAD
               <p className="text-xs text-neutral-500 mb-1">Válido até</p>
+=======
+              <p className="text-xs text-[var(--text-3)] mb-1">Válido até</p>
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
               <p className="font-semibold">{formatDate(quote.valid_until)}</p>
             </div>
           )}
         </div>
         {quote.notes && (
+<<<<<<< HEAD
           <div className="pt-3 border-t border-neutral-100">
             <p className="text-xs text-neutral-500 mb-1">Detalhes</p>
             <p className="text-sm text-neutral-700 whitespace-pre-wrap">{quote.notes}</p>
+=======
+          <div className="pt-3 border-t border-[var(--border-light)]">
+            <p className="text-xs text-[var(--text-3)] mb-1">Detalhes</p>
+            <p className="text-sm text-[var(--text-2)] whitespace-pre-wrap">{quote.notes}</p>
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
           </div>
         )}
       </div>
 
       {quote.customers && (
         <div className="card p-5">
+<<<<<<< HEAD
           <h3 className="font-semibold text-neutral-800 mb-3">Cliente</h3>
           <p className="font-medium text-neutral-900">{(quote.customers as any).name}</p>
           {(quote.customers as any).phone && <p className="text-sm text-neutral-500">{(quote.customers as any).phone}</p>}
           {(quote.customers as any).email && <p className="text-sm text-neutral-500">{(quote.customers as any).email}</p>}
+=======
+          <h3 className="font-semibold text-[var(--text-1)] mb-3">Cliente</h3>
+          <p className="font-medium text-[var(--text-1)]">{(quote.customers as any).name}</p>
+          {(quote.customers as any).phone && <p className="text-sm text-[var(--text-3)]">{(quote.customers as any).phone}</p>}
+          {(quote.customers as any).email && <p className="text-sm text-[var(--text-3)]">{(quote.customers as any).email}</p>}
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         </div>
       )}
     </div>

@@ -3,8 +3,11 @@ import { formatCurrency } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Edit2, ShoppingBag, Star, Clock } from 'lucide-react'
+<<<<<<< HEAD
 import { DeleteButton } from '@/components/ui/DeleteButton'
 import { deleteProduct } from '../actions'
+=======
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
 
 export default async function ProdutoDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -32,6 +35,7 @@ export default async function ProdutoDetailPage({ params }: { params: { id: stri
           <Link href="/produtos" className="btn-ghost"><ArrowLeft className="w-4 h-4" /></Link>
           <h1 className="page-title">{product.name}</h1>
         </div>
+<<<<<<< HEAD
         <div className="flex items-center gap-2">
           <Link href={`/produtos/${params.id}/editar`} className="btn-secondary">
             <Edit2 className="w-4 h-4" /> Editar
@@ -41,6 +45,11 @@ export default async function ProdutoDetailPage({ params }: { params: { id: stri
             confirmMessage={`Excluir "${product.name}" permanentemente? Esta ação não pode ser desfeita.`}
           />
         </div>
+=======
+        <Link href={`/produtos/${params.id}/editar`} className="btn-secondary">
+          <Edit2 className="w-4 h-4" /> Editar
+        </Link>
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
       </div>
 
       {/* Header */}

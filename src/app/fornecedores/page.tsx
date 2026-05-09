@@ -16,7 +16,11 @@ export default async function FornecedoresPage({ searchParams }: { searchParams:
       <div className="page-header">
         <div>
           <h1 className="page-title">Fornecedores</h1>
+<<<<<<< HEAD
           <p className="text-sm text-neutral-500 mt-0.5">{count ?? 0} cadastrados</p>
+=======
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{count ?? 0} cadastrados</p>
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         </div>
         <Link href="/fornecedores/novo" className="btn-primary">
           <Plus className="w-4 h-4" /> Novo Fornecedor
@@ -32,7 +36,11 @@ export default async function FornecedoresPage({ searchParams }: { searchParams:
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(suppliers ?? []).length === 0 ? (
+<<<<<<< HEAD
           <div className="col-span-3 card p-12 text-center text-neutral-400">
+=======
+          <div className="col-span-3 card p-12 text-center text-[var(--muted)]">
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
             <Building2 className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p>Nenhum fornecedor encontrado</p>
           </div>
@@ -40,8 +48,13 @@ export default async function FornecedoresPage({ searchParams }: { searchParams:
           (suppliers ?? []).map((s: any) => (
             <div key={s.id} className="card-hover p-5 space-y-3">
               <div className="flex items-center justify-between">
+<<<<<<< HEAD
                 <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center">
                   <Building2 className="w-5 h-5 text-neutral-500" />
+=======
+                <div className="w-10 h-10 rounded-xl bg-[var(--hover)] flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-[var(--text-3)]" />
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
                 </div>
                 <div className="flex gap-2">
                   <Link href={`/fornecedores/${s.id}`} className="btn-ghost text-xs py-1 px-2">Ver</Link>
@@ -49,6 +62,7 @@ export default async function FornecedoresPage({ searchParams }: { searchParams:
                 </div>
               </div>
               <div>
+<<<<<<< HEAD
                 <h3 className="font-semibold text-neutral-900">{s.name}</h3>
                 {s.contact_name && <p className="text-sm text-neutral-500">{s.contact_name}</p>}
               </div>
@@ -61,6 +75,20 @@ export default async function FornecedoresPage({ searchParams }: { searchParams:
                 {s.email && (
                   <a href={`mailto:${s.email}`} className="flex items-center gap-2 text-sm text-neutral-600 hover:text-brand-500">
                     <Mail className="w-3.5 h-3.5 text-neutral-400" /> {s.email}
+=======
+                <h3 className="font-semibold text-[var(--text-1)]">{s.name}</h3>
+                {s.contact_name && <p className="text-sm text-[var(--text-3)]">{s.contact_name}</p>}
+              </div>
+              <div className="space-y-1">
+                {s.phone && (
+                  <a href={`tel:${s.phone}`} className="flex items-center gap-2 text-sm text-[var(--text-3)] hover:text-brand-500">
+                    <Phone className="w-3.5 h-3.5 text-[var(--muted)]" /> {s.phone}
+                  </a>
+                )}
+                {s.email && (
+                  <a href={`mailto:${s.email}`} className="flex items-center gap-2 text-sm text-[var(--text-3)] hover:text-brand-500">
+                    <Mail className="w-3.5 h-3.5 text-[var(--muted)]" /> {s.email}
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
                   </a>
                 )}
               </div>

@@ -31,7 +31,11 @@ export default async function OrcamentosPage({ searchParams }: { searchParams: {
       <div className="page-header">
         <div>
           <h1 className="page-title">Orçamentos</h1>
+<<<<<<< HEAD
           <p className="text-sm text-neutral-500 mt-0.5">{count ?? 0} orçamentos</p>
+=======
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{count ?? 0} orçamentos</p>
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         </div>
         <Link href="/orcamentos/novo" className="btn-primary">
           <Plus className="w-4 h-4" /> Novo Orçamento
@@ -58,7 +62,11 @@ export default async function OrcamentosPage({ searchParams }: { searchParams: {
           <tbody>
             {(quotes ?? []).length === 0 ? (
               <tr>
+<<<<<<< HEAD
                 <td colSpan={6} className="text-center py-12 text-neutral-400">
+=======
+                <td colSpan={6} className="text-center py-12 text-[var(--muted)]">
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
                   <FileText className="w-10 h-10 mx-auto mb-3 opacity-30" />
                   <p>Nenhum orçamento encontrado</p>
                 </td>
@@ -67,7 +75,11 @@ export default async function OrcamentosPage({ searchParams }: { searchParams: {
               (quotes ?? []).map((q: any) => (
                 <tr key={q.id}>
                   <td className="font-mono text-sm font-medium">#{q.quote_number}</td>
+<<<<<<< HEAD
                   <td className="font-medium text-neutral-900">{q.customers?.name ?? '—'}</td>
+=======
+                  <td className="font-medium text-[var(--text-1)]">{q.customers?.name ?? '—'}</td>
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
                   <td><span className={statusBadge[q.status] ?? 'badge-gray'}>{q.status}</span></td>
                   <td>{q.valid_until ? formatDate(q.valid_until) : '—'}</td>
                   <td className="font-semibold">{formatCurrency(q.total_amount)}</td>

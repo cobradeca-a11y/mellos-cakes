@@ -12,15 +12,22 @@ export async function saveSettings(formData: FormData) {
     currency: formData.get('currency') as string,
     default_markup: Number(formData.get('default_markup') ?? 2.5),
   }
+<<<<<<< HEAD
 
   // Upsert single business settings row
+=======
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
   const { data: existing } = await supabase.from('business_settings').select('id').limit(1).single()
   if (existing) {
     await supabase.from('business_settings').update(data).eq('id', existing.id)
   } else {
     await supabase.from('business_settings').insert(data)
   }
+<<<<<<< HEAD
 
   revalidatePath('/configuracoes')
   revalidatePath('/dashboard')
+=======
+  revalidatePath('/configuracoes')
+>>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
 }
