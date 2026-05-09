@@ -7,6 +7,28 @@ import Link from 'next/link'
 
 export const metadata = { title: 'Despesas Operacionais' }
 
+const STOCK_BLOCK_START = '--- DADOS DE ESTOQUE ---'
+const STOCK_BLOCK_END = '--- FIM DADOS DE ESTOQUE ---'
+
+function splitNotes(notes?: string | null) {
+  const raw = notes ?? ''
+  const start = raw.indexOf(STOCK_BLOCK_START)
+  const end = raw.indexOf(STOCK_BLOCK_END)
+
+  if (start === -1 || end === -1 || end < start) {
+    return { baseNotes: raw.trim(), stockLines: [] as string[] }
+  }
+
+  return {
+    baseNotes: `${raw.slice(0, start)}${raw.slice(end + STOCK_BLOCK_END.length)}`.trim(),
+    stockLines: raw
+      .slice(start + STOCK_BLOCK_START.length, end)
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean),
+  }
+}
+
 export default async function DespesasOperacionaisPage({
   searchParams,
 }: {
@@ -85,10 +107,10 @@ export default async function DespesasOperacionaisPage({
         </div>
       </div>
 
-      <div className="card p-4">
+      <div className="card p-4 space-y-3">
         <form className="flex flex-wrap gap-3 items-end">
           <div>
-            <label className="label text-xs">Mês</label>
+            <label className="label text-xs">Mês exibido</label>
             <input type="month" name="mes" defaultValue={mesParam} className="input" />
           </div>
           <div>
@@ -108,6 +130,9 @@ export default async function DespesasOperacionaisPage({
           </div>
           <button type="submit" className="btn-primary">Filtrar</button>
         </form>
+        <p className="text-xs text-[var(--text-3)]">
+          A lista mostra as despesas do mês filtrado. Ao editar a data, o app retorna automaticamente para o mês da compra.
+        </p>
       </div>
 
       <div className="table-container">
@@ -117,6 +142,7 @@ export default async function DespesasOperacionaisPage({
               <th>Data</th>
               <th>Descrição</th>
               <th>Categoria</th>
+              <th>Estoque/controle</th>
               <th>Pagamento</th>
               <th>Valor</th>
               <th>Status</th>
@@ -126,38 +152,48 @@ export default async function DespesasOperacionaisPage({
           <tbody>
             {(expenses ?? []).length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-12 text-[var(--muted)]">
+                <td colSpan={8} className="text-center py-12 text-[var(--muted)]">
                   <ReceiptText className="w-10 h-10 mx-auto mb-3 opacity-30" />
                   <p>Nenhuma despesa operacional encontrada</p>
                 </td>
               </tr>
             ) : (
-              (expenses ?? []).map((expense: any) => (
-                <tr key={expense.id}>
-                  <td>{formatDate(expense.date)}</td>
-                  <td>
-                    <p className="font-medium text-[var(--text-1)]">{expense.description}</p>
-                    {expense.notes && <p className="text-xs text-[var(--text-3)] mt-0.5">{expense.notes}</p>}
-                  </td>
-                  <td><span className="badge-gray">{expense.category}</span></td>
-                  <td className="capitalize text-[var(--text-2)]">{expense.payment_method?.replaceAll('_', ' ') ?? '—'}</td>
-                  <td className="font-semibold text-red-500">-{formatCurrency(expense.amount)}</td>
-                  <td>
-                    <span className={expense.paid ? 'badge-green' : 'badge-yellow'}>
-                      {expense.paid ? 'Pago' : 'Pendente'}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="flex gap-2 justify-end">
-                      <Link href={`/despesas-operacionais/${expense.id}/editar`} className="btn-ghost text-xs py-1 px-2">Editar</Link>
-                      <DeleteButton
-                        action={deleteOperationalExpense.bind(null, expense.id)}
-                        confirmMessage={`Excluir a despesa "${expense.description}"? Esta ação não pode ser desfeita.`}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))
+              (expenses ?? []).map((expense: any) => {
+                const { baseNotes, stockLines } = splitNotes(expense.notes)
+                return (
+                  <tr key={expense.id}>
+                    <td>{formatDate(expense.date)}</td>
+                    <td>
+                      <p className="font-medium text-[var(--text-1)]">{expense.description}</p>
+                      {baseNotes && <p className="text-xs text-[var(--text-3)] mt-0.5">{baseNotes}</p>}
+                    </td>
+                    <td><span className="badge-gray">{expense.category}</span></td>
+                    <td>
+                      {stockLines.length > 0 ? (
+                        <div className="space-y-0.5 text-xs text-[var(--text-3)]">
+                          {stockLines.map(line => <p key={line}>{line}</p>)}
+                        </div>
+                      ) : '—'}
+                    </td>
+                    <td className="capitalize text-[var(--text-2)]">{expense.payment_method?.replaceAll('_', ' ') ?? '—'}</td>
+                    <td className="font-semibold text-red-500">-{formatCurrency(expense.amount)}</td>
+                    <td>
+                      <span className={expense.paid ? 'badge-green' : 'badge-yellow'}>
+                        {expense.paid ? 'Pago' : 'Pendente'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="flex gap-2 justify-end">
+                        <Link href={`/despesas-operacionais/${expense.id}/editar`} className="btn-ghost text-xs py-1 px-2">Editar</Link>
+                        <DeleteButton
+                          action={deleteOperationalExpense.bind(null, expense.id)}
+                          confirmMessage={`Excluir a despesa "${expense.description}"? Esta ação não pode ser desfeita.`}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })
             )}
           </tbody>
         </table>
