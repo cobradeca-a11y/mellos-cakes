@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, BarChart2, Users, ShoppingBag, Cookie, BookOpen,
   ClipboardList, ShoppingCart, Truck, CalendarDays, DollarSign,
-  Megaphone, Settings, FileText, Building2, Package, X, Menu
+  Megaphone, Settings, FileText, Building2, Package, X, Menu, ReceiptText
 } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
@@ -40,6 +40,7 @@ const navGroups = [
       { href: '/producao', icon: CalendarDays, label: 'Produção' },
       { href: '/ingredientes', icon: Cookie, label: 'Ingredientes' },
       { href: '/estoque', icon: Package, label: 'Estoque' },
+      { href: '/despesas-operacionais', icon: ReceiptText, label: 'Despesas Operacionais' },
     ],
   },
   {
