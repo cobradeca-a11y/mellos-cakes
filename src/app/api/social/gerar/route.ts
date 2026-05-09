@@ -7,6 +7,18 @@ const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL ?? ''
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mellos-cakes.vercel.app'
 const APP_TITLE = 'MellosCakes - Gerador de Conteúdo'
 
+const PADRAO_VISUAL_BOLO_POTE = `Padrão visual obrigatório para bolo de pote da Mello's Cakes:
+- Sempre priorizar foto real do produto quando existir.
+- Se sugerir imagem de IA, o pote precisa seguir o modelo canônico da marca.
+- Pote quadrado transparente de 220 ml com tampa lacre transparente.
+- Proporção do pote: lados de 6,5 cm e altura de 7,6 cm.
+- Corpo alto, cantos arredondados, plástico transparente e tampa quadrada encaixada com lacre/trava lateral.
+- A imagem deve preservar o formato quadrado do pote, a transparência, a tampa lacre e a proporção real.
+- Recheio e massa podem mudar conforme o sabor, mas o pote não muda.
+- Evitar copo redondo, pote cilíndrico, taça, bowl, vidro, embalagem sem tampa ou pote sem lacre.
+- Para Ninho com Nutella: massa de baunilha clara, recheio de Ninho, camadas finas de Nutella e zig-zag de Nutella no topo quando aplicável.
+`
+
 const SYSTEM = `Você é especialista sênior em marketing digital para confeitarias artesanais brasileiras.
 Cria conteúdo real, direto, humano e profissional para vender bolos de pote, bolos, tortas e doces.
 Priorize WhatsApp como canal de conversão, mas entregue também direção criativa para imagem/vídeo.
@@ -15,6 +27,7 @@ Use linguagem simples, comercial e próxima, sem exageros vazios.
 HASHTAGS: sempre comece cada hashtag com #, separe por espaço e nunca junte palavras sem #.
 PROPAGANDA: quando indicar propaganda, explique claramente o que fazer, por que fazer, qual produto destacar, qual argumento usar, qual canal usar, qual horário usar e qual ação o cliente deve tomar.
 CTA significa chamada para ação: uma frase objetiva dizendo o próximo passo do cliente, por exemplo: pedir pelo WhatsApp, responder a enquete, reservar o sabor, chamar para encomendar.
+IMAGENS: sempre recomende foto real quando houver. Se indicar imagem gerada por IA para bolo de pote, preserve obrigatoriamente o pote quadrado transparente com tampa lacre da Mello's Cakes.
 RESPONDA APENAS EM JSON VÁLIDO. Sem markdown, sem texto fora do JSON.`
 
 const MOTORES: Record<string,string> = {
@@ -119,6 +132,10 @@ function textValue(value: unknown, fallback = '') {
   return fallback
 }
 
+function getDefaultPromptImagem(produto: string, canal: string) {
+  return `Preferir foto real do produto. Se for gerar imagem com IA: foto profissional e apetitosa de ${produto} dentro do pote quadrado transparente da Mello's Cakes, pote de 220 ml com lados de 6,5 cm e altura de 7,6 cm, corpo alto com cantos arredondados, tampa lacre transparente quadrada encaixada com trava lateral, camadas visíveis de massa e recheio conforme o sabor, embalagem limpa, iluminação natural suave, fundo de confeitaria artesanal, foco nas camadas e textura cremosa, composição vertical para ${canal}, sem textos na imagem, sem copo redondo, sem pote cilíndrico, sem embalagem diferente.`
+}
+
 function enhanceContent(content: any, body: RequestPayload) {
   const canal = body.canal ?? 'instagram'
   const produto = body.produto ?? 'produto'
@@ -136,11 +153,11 @@ function enhanceContent(content: any, body: RequestPayload) {
     stories: content?.stories ?? null,
     melhor_rede: textValue(content?.melhor_rede, canal === 'youtube' ? 'YouTube Shorts' : canal.charAt(0).toUpperCase() + canal.slice(1)),
     melhor_horario: textValue(content?.melhor_horario, '18h–21h'),
-    dica: textValue(content?.dica, 'Use foto clara, aproximada e com foco nas camadas/recheio para aumentar desejo.'),
+    dica: textValue(content?.dica, 'Use foto real do produto quando houver. Se usar imagem de IA, mantenha o pote quadrado transparente com tampa lacre da Mello\'s Cakes.'),
     orientacao_propaganda: textValue(content?.orientacao_propaganda, `Divulgue ${produto} explicando sabor, textura, diferencial do pote e como pedir pelo WhatsApp.`),
-    prompt_imagem: textValue(content?.prompt_imagem, `Foto profissional e apetitosa de ${produto}, embalagem limpa, iluminação natural suave, fundo de confeitaria artesanal, foco nas camadas e textura cremosa, composição vertical para ${canal}, sem textos na imagem.`),
+    prompt_imagem: textValue(content?.prompt_imagem, getDefaultPromptImagem(produto, canal)),
     texto_na_arte: textValue(content?.texto_na_arte, `Hoje tem ${produto}`),
-    fundo_visual: textValue(content?.fundo_visual, 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto.'),
+    fundo_visual: textValue(content?.fundo_visual, 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto no pote quadrado transparente com tampa lacre.'),
     interacoes: content?.interacoes ?? {
       enquete: `Você provaria ${produto} hoje?`,
       opcoes: ['Sim, eu quero!', 'Quero ver sabores'],
@@ -148,7 +165,8 @@ function enhanceContent(content: any, body: RequestPayload) {
       contagem_regressiva: isLaunch ? `Lançamento de ${produto}` : null,
     },
     checklist_publicacao: content?.checklist_publicacao ?? [
-      'Usar foto nítida do produto real',
+      'Usar foto real e nítida do produto quando houver',
+      'Se usar imagem de IA, conferir se o pote é quadrado transparente com tampa lacre',
       'Conferir WhatsApp/CTA antes de publicar',
       'Postar no horário sugerido',
       formato === 'story' ? 'Adicionar enquete ou caixa de pergunta' : 'Responder comentários e directs rapidamente',
@@ -171,25 +189,25 @@ function getFallbackContent(body: RequestPayload) {
     legenda: `Seu ${produto} perfeito está aqui! 🎂✨ Feito com capricho, recheio generoso e sabor de verdade. Faça sua encomenda e garanta o seu!`,
     hashtags: '#melloscakes #bolodepote #confeitariaartesanal #docesartesanais #riograndeRS #feitoComCarinho',
     cta: cta ?? 'Encomendar pelo WhatsApp agora!',
-    roteiro: isVideo ? '1. Mostrar o produto finalizado\n2. Aproximar nas camadas e textura\n3. Mostrar uma colherada ou detalhe do recheio\n4. Fechar com chamada para encomenda no WhatsApp' : null,
+    roteiro: isVideo ? '1. Mostrar o produto real finalizado\n2. Aproximar nas camadas e textura\n3. Mostrar a tampa lacre e o pote quadrado transparente\n4. Mostrar uma colherada ou detalhe do recheio\n5. Fechar com chamada para encomenda no WhatsApp' : null,
     slides: isCarrossel ? [
       { titulo: `${produto} chegou!`, texto: 'Camadas cremosas e sabor marcante.' },
+      { titulo: 'Pote com tampa lacre', texto: 'Mais segurança, higiene e praticidade.' },
       { titulo: 'Feito com capricho', texto: 'Produção artesanal e apresentação impecável.' },
-      { titulo: 'Pronto para saborear', texto: 'Ideal para pedir para você ou presentear.' },
       { titulo: 'Peça o seu', texto: link_whatsapp || 'Chame no WhatsApp e faça sua encomenda.' },
     ] : null,
     stories: isStory ? [
-      { tela:1, texto:`Hoje tem ${produto}! 🎂`, acao:'Mostrar o produto' },
+      { tela:1, texto:`Hoje tem ${produto}! 🎂`, acao:'Mostrar o produto real no pote quadrado com tampa lacre' },
       { tela:2, texto:'Cremoso, bonito e feito com carinho.', acao:'Adicionar enquete: qual camada você provaria primeiro?' },
       { tela:3, texto:'Encomende pelo WhatsApp!', acao:'Usar sticker de link ou botão de mensagem' },
     ] : null,
     melhor_rede: canal === 'youtube' ? 'YouTube Shorts' : canal.charAt(0).toUpperCase() + canal.slice(1),
     melhor_horario: '18h–21h',
-    dica: 'Use foto clara, aproximada e com foco nas camadas/recheio para aumentar desejo.',
-    orientacao_propaganda: `Propaganda recomendada: mostre ${produto}, explique o sabor e as camadas, destaque que é artesanal e finalize com pedido pelo WhatsApp.`,
-    prompt_imagem: `Foto profissional e apetitosa de ${produto}, embalagem limpa, iluminação natural suave, fundo de confeitaria artesanal, foco nas camadas e textura cremosa, composição vertical para ${canal}, sem textos na imagem.`,
+    dica: 'Use foto real do produto quando houver. Se usar imagem de IA, mantenha o pote quadrado transparente com tampa lacre da Mello\'s Cakes.',
+    orientacao_propaganda: `Propaganda recomendada: mostre ${produto} no pote quadrado transparente com tampa lacre, explique o sabor e as camadas, destaque que é artesanal e finalize com pedido pelo WhatsApp.`,
+    prompt_imagem: getDefaultPromptImagem(produto, canal),
     texto_na_arte: isLaunch ? `Novo sabor: ${produto}` : `Hoje tem ${produto}`,
-    fundo_visual: 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto.',
+    fundo_visual: 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto no pote quadrado transparente com tampa lacre.',
     interacoes: {
       enquete: `Você provaria ${produto} hoje?`,
       opcoes: ['Sim, eu quero!', 'Quero ver sabores'],
@@ -279,6 +297,8 @@ export async function POST(req: NextRequest) {
 
     const prompt = `${INTELIGENCIA_MARKETING_BASE}
 
+${PADRAO_VISUAL_BOLO_POTE}
+
 Motor estratégico: ${MOTORES[motor]??MOTORES.venda}
 Rede: ${canal} | Formato: ${FORMATOS[formato]??'Post'}
 Produto: ${produto} | Tipo: ${tipo_produto??'confeitaria'}
@@ -296,16 +316,16 @@ Inclua:
 4. CTA claro para WhatsApp. Explique o próximo passo do cliente.
 5. Melhor horário para postar, com justificativa curta.
 6. Orientação de propaganda bem explicativa: o que destacar, por que destacar, canal, horário e ação esperada.
-7. Prompt visual para gerar/criar fundo/imagem da publicação.
+7. Prompt visual para foto real ou imagem de IA. Sempre priorize foto real. Se for IA, o prompt deve exigir o pote quadrado transparente com tampa lacre, proporção 6,5 cm x 7,6 cm, corpo alto, cantos arredondados e tampa quadrada encaixada com lacre/trava lateral.
 8. Texto curto para colocar dentro da arte, se fizer sentido.
 9. Direção de fundo visual em texto corrido: cores, iluminação, composição e destaque do produto. Não retorne fundo_visual como objeto.
 10. Interações: enquete, opções de resposta, caixa de pergunta e contagem regressiva apenas se for lançamento/sabor novo.
-11. Checklist de publicação.
+11. Checklist de publicação, incluindo conferir se a foto/imagem mantém o pote correto.
 
 JSON exato (sem nada fora):
 ${JSON.stringify(jsonShape)}
 
-Nunca retorne hashtags juntas como uma palavra única. Nunca omita o #.`
+Nunca retorne hashtags juntas como uma palavra única. Nunca omita o #. Nunca sugira pote redondo, copo, taça, bowl ou embalagem diferente para bolo de pote.`
 
     if (!OPENROUTER_KEY) {
       return NextResponse.json({
