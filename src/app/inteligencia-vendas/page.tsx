@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
 import { BrainCircuit, CalendarDays, ClipboardCheck, MessageCircle, Sparkles, Target, TrendingUp } from 'lucide-react'
 
-export const metadata = { title: 'Inteligência de Vendas' }
+export const metadata = { title: 'Inteligência de Marketing' }
 
 const BUSINESS_ID = '1d8de479-7996-4868-b2d1-c277b5a7fb73'
 
@@ -38,13 +38,13 @@ function getNextCommercialDate() {
 
 function getWeekdayPlan(day: number) {
   const plan: Record<number, { theme: string; action: string; channel: string; time: string }> = {
-    0: { theme: 'Família e sobremesa', action: 'Publicar conteúdo afetivo e abrir encomendas da semana.', channel: 'Instagram Stories + WhatsApp', time: '10h30 e 18h30' },
-    1: { theme: 'Planejamento da semana', action: 'Mostrar cardápio, sabores disponíveis e bastidores de produção.', channel: 'Stories', time: '09h e 17h' },
-    2: { theme: 'Educação e desejo', action: 'Explicar um sabor, textura, camadas e diferencial do pote.', channel: 'Instagram Feed', time: '11h30 ou 18h' },
-    3: { theme: 'Prova social', action: 'Publicar feedback, bastidor, entrega ou produto real pronto.', channel: 'Stories + Feed', time: '12h e 19h' },
-    4: { theme: 'Antecipação do fim de semana', action: 'Iniciar chamada para pedidos de sexta/sábado.', channel: 'WhatsApp + Stories', time: '11h30 e 18h30' },
-    5: { theme: 'Venda direta', action: 'Divulgar produto com maior apelo visual e CTA forte para WhatsApp.', channel: 'Feed + Stories', time: '11h30, 17h30 e 20h' },
-    6: { theme: 'Consumo imediato', action: 'Reforçar disponibilidade, retirada/entrega e desejo visual.', channel: 'Stories', time: '10h, 15h e 19h' },
+    0: { theme: 'Família e sobremesa', action: 'Publicar conteúdo afetivo, explicar como pedir e abrir encomendas da semana.', channel: 'Instagram Stories + WhatsApp', time: '10h30 e 18h30' },
+    1: { theme: 'Planejamento da semana', action: 'Mostrar cardápio, sabores disponíveis, formas de pagamento e bastidores de produção.', channel: 'Stories', time: '09h e 17h' },
+    2: { theme: 'Educação e desejo', action: 'Explicar um sabor, textura, camadas, diferencial do pote e como conservar.', channel: 'Instagram Feed', time: '11h30 ou 18h' },
+    3: { theme: 'Prova social', action: 'Publicar feedback, bastidor, entrega, produto real pronto e chamada para encomendas.', channel: 'Stories + Feed', time: '12h e 19h' },
+    4: { theme: 'Antecipação do fim de semana', action: 'Iniciar chamada para pedidos de sexta/sábado com produto prioritário.', channel: 'WhatsApp + Stories', time: '11h30 e 18h30' },
+    5: { theme: 'Venda direta explicativa', action: 'Divulgar produto com maior apelo visual explicando sabor, valor percebido, como pedir e prazo.', channel: 'Feed + Stories', time: '11h30, 17h30 e 20h' },
+    6: { theme: 'Consumo imediato', action: 'Reforçar disponibilidade, retirada/entrega, desejo visual e chamada direta para WhatsApp.', channel: 'Stories', time: '10h, 15h e 19h' },
   }
 
   return plan[day]
@@ -76,20 +76,26 @@ export default async function InteligenciaVendasPage() {
   const estimatedProfit30 = orders30.reduce((sum: number, order: any) => sum + (Number(order.total_amount ?? 0) - Number(order.estimated_cost ?? 0)), 0)
   const availableProducts = products.filter((p: any) => p.available)
   const priorityProduct = availableProducts.find((p: any) => p.featured) ?? availableProducts[0]
-  const premiumProduct = availableProducts.sort((a: any, b: any) => Number(b.base_price ?? 0) - Number(a.base_price ?? 0))[0]
+  const premiumProduct = [...availableProducts].sort((a: any, b: any) => Number(b.base_price ?? 0) - Number(a.base_price ?? 0))[0]
   const contentCount = posts.length
 
   const recommendation = priorityProduct
-    ? `Priorizar ${priorityProduct.name} hoje: está disponível${priorityProduct.featured ? ', marcado como destaque' : ''} e pode ser usado como produto principal da campanha do dia.`
-    : 'Cadastre e marque produtos disponíveis para o algoritmo conseguir definir uma prioridade comercial diária.'
+    ? `Priorizar ${priorityProduct.name} hoje: está disponível${priorityProduct.featured ? ', marcado como destaque' : ''}. A propaganda deve explicar o sabor, mostrar o diferencial visual, informar como pedir e levar o cliente ao WhatsApp.`
+    : 'Cadastre e marque produtos disponíveis para a Inteligência de Marketing conseguir definir uma prioridade comercial diária.'
 
   return (
     <div className="space-y-5">
       <div className="page-header">
         <div>
-          <h1 className="page-title flex items-center gap-2"><BrainCircuit className="w-6 h-6 text-brand-500" /> Inteligência de Vendas</h1>
-          <p className="text-sm text-[var(--text-3)] mt-0.5">Plano comercial inicial + aprendizado progressivo pelos dados reais da Mello's Cakes.</p>
+          <h1 className="page-title flex items-center gap-2"><BrainCircuit className="w-6 h-6 text-brand-500" /> Inteligência de Marketing</h1>
+          <p className="text-sm text-[var(--text-3)] mt-0.5">Plano comercial inicial + orientação de conteúdo para o gerador de redes sociais.</p>
         </div>
+      </div>
+
+      <div className="card p-4 border-l-4 border-brand-500">
+        <p className="text-sm text-[var(--text-2)]">
+          Esta área funciona como o professor estratégico. Ela indica o que vender, quando divulgar, qual canal usar e como a propaganda deve ser explicada. O gerador de conteúdo usa essa mesma lógica como base de orientação.
+        </p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -150,7 +156,7 @@ export default async function InteligenciaVendasPage() {
             <p className="text-sm text-[var(--text-3)] mt-1">Foco sugerido: {nextDate.focus}.</p>
           </div>
           <div className="rounded-xl p-3 bg-[var(--hover)] border border-[var(--border)]">
-            <p className="text-xs text-[var(--text-3)]">Plano inicial: começar campanha com antecedência, alternando bastidor, desejo visual, prova social e venda direta.</p>
+            <p className="text-xs text-[var(--text-3)]">Plano inicial: começar campanha com antecedência, alternando bastidor, desejo visual, prova social, explicação do produto e venda direta.</p>
           </div>
         </div>
       </div>
@@ -214,10 +220,10 @@ export default async function InteligenciaVendasPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           {[
-            ['Manhã', 'Mostrar bastidor, cardápio ou produto do dia.'],
-            ['Almoço', 'Publicar foto real/apetitosa com CTA leve.'],
-            ['Fim da tarde', 'Reforçar desejo visual e abrir pedidos no WhatsApp.'],
-            ['Noite', 'Fechar com urgência leve, prova social ou lembrete.'],
+            ['Manhã', 'Mostrar bastidor, cardápio, disponibilidade ou produto do dia.'],
+            ['Almoço', 'Publicar foto real/apetitosa explicando sabor, camadas e como pedir.'],
+            ['Fim da tarde', 'Reforçar desejo visual, abrir pedidos no WhatsApp e usar enquete/story.'],
+            ['Noite', 'Fechar com urgência leve, prova social, lembrete ou últimas unidades se for verdadeiro.'],
           ].map(([time, action]) => (
             <div key={time} className="rounded-xl p-4 bg-[var(--hover)] border border-[var(--border)]">
               <p className="font-semibold text-[var(--text-1)]">{time}</p>
