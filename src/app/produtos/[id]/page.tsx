@@ -3,6 +3,8 @@ import { formatCurrency } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Edit2, ShoppingBag, Star, Clock } from 'lucide-react'
+import { DeleteButton } from '@/components/ui/DeleteButton'
+import { deleteProduct } from '../actions'
 
 export default async function ProdutoDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -30,9 +32,15 @@ export default async function ProdutoDetailPage({ params }: { params: { id: stri
           <Link href="/produtos" className="btn-ghost"><ArrowLeft className="w-4 h-4" /></Link>
           <h1 className="page-title">{product.name}</h1>
         </div>
-        <Link href={`/produtos/${params.id}/editar`} className="btn-secondary">
-          <Edit2 className="w-4 h-4" /> Editar
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href={`/produtos/${params.id}/editar`} className="btn-secondary">
+            <Edit2 className="w-4 h-4" /> Editar
+          </Link>
+          <DeleteButton
+            action={deleteProduct.bind(null, params.id)}
+            confirmMessage={`Excluir "${product.name}" permanentemente? Esta ação não pode ser desfeita.`}
+          />
+        </div>
       </div>
 
       {/* Header */}
