@@ -213,6 +213,30 @@ export async function POST(req: NextRequest) {
     const isCarrossel = formato==='carrossel'
     const isStory     = formato==='story'
 
+    const jsonShape = {
+      titulo: '...',
+      texto_principal: '...',
+      legenda: '...',
+      hashtags: '#tag1 #tag2 #tag3',
+      cta: '...',
+      roteiro: isVideo ? '...' : null,
+      slides: isCarrossel ? [{ titulo: '', texto: '', intencao: '' }] : null,
+      stories: isStory ? [{ tela: 1, texto: '', acao: '', sticker: '' }] : null,
+      melhor_rede: '...',
+      melhor_horario: '...',
+      dica: '...',
+      prompt_imagem: '...',
+      texto_na_arte: '...',
+      fundo_visual: '...',
+      interacoes: {
+        enquete: '...',
+        opcoes: ['...', '...'],
+        caixa_pergunta: '...',
+        contagem_regressiva: null,
+      },
+      checklist_publicacao: ['...', '...', '...'],
+    }
+
     const prompt = `Motor estratégico: ${MOTORES[motor]??MOTORES.venda}
 Rede: ${canal} | Formato: ${FORMATOS[formato]??'Post'}
 Produto: ${produto} | Tipo: ${tipo_produto??'confeitaria'}
@@ -236,7 +260,7 @@ Inclua:
 10. Checklist de publicação.
 
 JSON exato (sem nada fora):
-{"titulo":"...","texto_principal":"...","legenda":"...","hashtags":"#tag1 #tag2 #tag3","cta":"...","roteiro":${isVideo?'"..."':'null'},"slides":${isCarrossel?'[{"titulo":"","texto":"","intencao":""}]':'null'},"stories":${isStory?'[{"tela":1,"texto":"","acao":"","sticker":""}]':'null'},"melhor_rede":"...","melhor_horario":"...","dica":"...","prompt_imagem":"...","texto_na_arte":"...","fundo_visual":"...","interacoes":{"enquete":"...","opcoes":["...","..."],"caixa_pergunta":"...","contagem_regressiva":null},"checklist_publicacao":["...","...","..."]}`
+${JSON.stringify(jsonShape)}
 
 Nunca retorne hashtags juntas como uma palavra única. Nunca omita o #.`
 
