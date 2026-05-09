@@ -4,11 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-<<<<<<< HEAD
-=======
-const BUSINESS_ID = '1d8de479-7996-4868-b2d1-c277b5a7fb73'
-
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
 export async function createPurchaseOrder(formData: FormData) {
   const supabase = createClient()
   const itemsJson = formData.get('items') as string
@@ -16,10 +11,6 @@ export async function createPurchaseOrder(formData: FormData) {
   const totalAmount = items.reduce((s: number, i: any) => s + i.total_price, 0)
 
   const { data: order, error } = await supabase.from('purchase_orders').insert({
-<<<<<<< HEAD
-=======
-    business_id: BUSINESS_ID,
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
     supplier_id: formData.get('supplier_id') as string || null,
     status: 'pendente',
     total_amount: totalAmount,

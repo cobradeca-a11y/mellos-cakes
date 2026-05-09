@@ -69,56 +69,32 @@ export default async function FinanceiroPage({
         <div className="card p-4 border-l-4 border-green-500">
           <div className="flex items-center gap-2 mb-1">
             <TrendingUp className="w-4 h-4 text-green-600" />
-<<<<<<< HEAD
             <p className="text-xs text-neutral-500">Receitas Recebidas</p>
           </div>
           <p className="text-xl font-display font-bold text-green-600">{formatCurrency(receitas)}</p>
           {receitasPendentes > 0 && <p className="text-xs text-neutral-400 mt-1">+ {formatCurrency(receitasPendentes)} pendente</p>}
-=======
-            <p className="text-xs text-[var(--text-3)]">Receitas Recebidas</p>
-          </div>
-          <p className="text-xl font-display font-bold text-green-600">{formatCurrency(receitas)}</p>
-          {receitasPendentes > 0 && <p className="text-xs text-[var(--muted)] mt-1">+ {formatCurrency(receitasPendentes)} pendente</p>}
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         </div>
         <div className="card p-4 border-l-4 border-red-500">
           <div className="flex items-center gap-2 mb-1">
             <TrendingDown className="w-4 h-4 text-red-600" />
-<<<<<<< HEAD
             <p className="text-xs text-neutral-500">Despesas Pagas</p>
           </div>
           <p className="text-xl font-display font-bold text-red-600">{formatCurrency(despesas)}</p>
           {despesasPendentes > 0 && <p className="text-xs text-neutral-400 mt-1">+ {formatCurrency(despesasPendentes)} pendente</p>}
-=======
-            <p className="text-xs text-[var(--text-3)]">Despesas Pagas</p>
-          </div>
-          <p className="text-xl font-display font-bold text-red-600">{formatCurrency(despesas)}</p>
-          {despesasPendentes > 0 && <p className="text-xs text-[var(--muted)] mt-1">+ {formatCurrency(despesasPendentes)} pendente</p>}
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         </div>
         <div className={`card p-4 border-l-4 ${lucro >= 0 ? 'border-blue-500' : 'border-orange-500'}`}>
           <div className="flex items-center gap-2 mb-1">
             <DollarSign className={`w-4 h-4 ${lucro >= 0 ? 'text-blue-600' : 'text-orange-600'}`} />
-<<<<<<< HEAD
             <p className="text-xs text-neutral-500">Lucro Líquido</p>
-=======
-            <p className="text-xs text-[var(--text-3)]">Lucro Líquido</p>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
           </div>
           <p className={`text-xl font-display font-bold ${lucro >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
             {formatCurrency(lucro)}
           </p>
         </div>
         <div className="card p-4 border-l-4 border-neutral-300">
-<<<<<<< HEAD
           <p className="text-xs text-neutral-500 mb-1">Lançamentos</p>
           <p className="text-xl font-display font-bold text-neutral-900">{count ?? 0}</p>
           <p className="text-xs text-neutral-400 mt-1">no período</p>
-=======
-          <p className="text-xs text-[var(--text-3)] mb-1">Lançamentos</p>
-          <p className="text-xl font-display font-bold text-[var(--text-1)]">{count ?? 0}</p>
-          <p className="text-xs text-[var(--muted)] mt-1">no período</p>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         </div>
       </div>
 
@@ -139,11 +115,7 @@ export default async function FinanceiroPage({
           <tbody>
             {(entries ?? []).length === 0 ? (
               <tr>
-<<<<<<< HEAD
                 <td colSpan={7} className="text-center py-12 text-neutral-400">
-=======
-                <td colSpan={7} className="text-center py-12 text-[var(--muted)]">
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
                   Nenhum lançamento neste período
                 </td>
               </tr>
@@ -151,11 +123,7 @@ export default async function FinanceiroPage({
               (entries ?? []).map((e: any) => (
                 <tr key={e.id}>
                   <td>{formatDate(e.date)}</td>
-<<<<<<< HEAD
                   <td className="font-medium text-neutral-900">{e.description}</td>
-=======
-                  <td className="font-medium text-[var(--text-1)]">{e.description}</td>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
                   <td><span className="badge-gray">{e.category}</span></td>
                   <td>
                     <span className={e.type === 'receita' ? 'badge-green' : 'badge-red'}>

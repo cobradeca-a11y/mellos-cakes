@@ -97,7 +97,7 @@ JSON exato (sem nada fora):
         'X-Title': 'Gerador de Conteúdo',          // aparece no dashboard do OpenRouter
       },
       body: JSON.stringify({
-        model: 'google/gemma-3-27b-it:free', // modelo gratuito — veja opções abaixo
+        model: 'openrouter/auto',
         max_tokens: 1500,
         messages: [
           { role: 'system', content: SYSTEM },

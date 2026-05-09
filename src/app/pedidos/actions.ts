@@ -3,11 +3,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-<<<<<<< HEAD
-=======
-
-const BUSINESS_ID = '1d8de479-7996-4868-b2d1-c277b5a7fb73'
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
 import { generateOrderNumber } from '@/lib/utils'
 
 export async function createOrder(formData: FormData) {
@@ -19,10 +14,6 @@ export async function createOrder(formData: FormData) {
   const data = {
     customer_id: formData.get('customer_id') as string || null,
     order_number: generateOrderNumber(),
-<<<<<<< HEAD
-=======
-    business_id: BUSINESS_ID,
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
     status: 'confirmado',
     total_amount: totalAmount,
     estimated_cost: Number(formData.get('estimated_cost') ?? 0),

@@ -47,101 +47,59 @@ export default async function ClienteDetailPage({ params }: { params: { id: stri
           { label: 'Ticket Médio', value: orders?.length ? formatCurrency(totalSpent / orders.length) : '—', icon: ClipboardList },
         ].map(s => (
           <div key={s.label} className="card p-4 text-center">
-<<<<<<< HEAD
             <p className="text-2xl font-display font-semibold text-neutral-900">{s.value}</p>
             <p className="text-xs text-neutral-500 mt-1">{s.label}</p>
-=======
-            <p className="text-2xl font-display font-semibold text-[var(--text-1)]">{s.value}</p>
-            <p className="text-xs text-[var(--text-3)] mt-1">{s.label}</p>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
           </div>
         ))}
       </div>
 
       {/* Info */}
       <div className="card p-5 space-y-3">
-<<<<<<< HEAD
         <h3 className="font-semibold text-neutral-800">Informações de Contato</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           {customer.phone && (
             <div className="flex items-center gap-2 text-neutral-700">
               <Phone className="w-4 h-4 text-neutral-400" />
-=======
-        <h3 className="font-semibold text-[var(--text-1)]">Informações de Contato</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          {customer.phone && (
-            <div className="flex items-center gap-2 text-[var(--text-2)]">
-              <Phone className="w-4 h-4 text-[var(--muted)]" />
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
               <a href={`tel:${customer.phone}`} className="hover:text-brand-500">{customer.phone}</a>
             </div>
           )}
           {customer.email && (
-<<<<<<< HEAD
             <div className="flex items-center gap-2 text-neutral-700">
               <Mail className="w-4 h-4 text-neutral-400" />
-=======
-            <div className="flex items-center gap-2 text-[var(--text-2)]">
-              <Mail className="w-4 h-4 text-[var(--muted)]" />
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
               <a href={`mailto:${customer.email}`} className="hover:text-brand-500">{customer.email}</a>
             </div>
           )}
           {customer.birthdate && (
-<<<<<<< HEAD
             <div className="flex items-center gap-2 text-neutral-700">
               <Calendar className="w-4 h-4 text-neutral-400" />
-=======
-            <div className="flex items-center gap-2 text-[var(--text-2)]">
-              <Calendar className="w-4 h-4 text-[var(--muted)]" />
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
               {formatDate(customer.birthdate)}
             </div>
           )}
         </div>
         {customer.preferences && (
           <div>
-<<<<<<< HEAD
             <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">Preferências</p>
             <p className="text-sm text-neutral-700">{customer.preferences}</p>
-=======
-            <p className="text-xs text-[var(--text-3)] uppercase tracking-wider font-medium mb-1">Preferências</p>
-            <p className="text-sm text-[var(--text-2)]">{customer.preferences}</p>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
           </div>
         )}
         {customer.restrictions && (
           <div>
-<<<<<<< HEAD
             <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">Restrições</p>
-=======
-            <p className="text-xs text-[var(--text-3)] uppercase tracking-wider font-medium mb-1">Restrições</p>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
             <p className="text-sm text-red-600">{customer.restrictions}</p>
           </div>
         )}
         {customer.notes && (
           <div>
-<<<<<<< HEAD
             <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">Observações</p>
             <p className="text-sm text-neutral-700">{customer.notes}</p>
-=======
-            <p className="text-xs text-[var(--text-3)] uppercase tracking-wider font-medium mb-1">Observações</p>
-            <p className="text-sm text-[var(--text-2)]">{customer.notes}</p>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
           </div>
         )}
       </div>
 
       {/* Orders */}
       <div className="table-container">
-<<<<<<< HEAD
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
           <h3 className="font-semibold text-neutral-800">Histórico de Pedidos</h3>
-=======
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-light)]">
-          <h3 className="font-semibold text-[var(--text-1)]">Histórico de Pedidos</h3>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
           <Link href={`/pedidos/novo?cliente=${params.id}`} className="btn-primary text-xs py-1.5 px-3">
             + Novo Pedido
           </Link>
@@ -158,11 +116,7 @@ export default async function ClienteDetailPage({ params }: { params: { id: stri
           </thead>
           <tbody>
             {(orders ?? []).length === 0 ? (
-<<<<<<< HEAD
               <tr><td colSpan={5} className="text-center py-8 text-neutral-400">Nenhum pedido</td></tr>
-=======
-              <tr><td colSpan={5} className="text-center py-8 text-[var(--muted)]">Nenhum pedido</td></tr>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
             ) : (
               (orders ?? []).map(o => (
                 <tr key={o.id}>

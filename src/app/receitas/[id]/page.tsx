@@ -36,7 +36,6 @@ export default async function ReceitaDetailPage({ params }: { params: { id: stri
       {/* Header info */}
       <div className="card p-5 flex flex-wrap gap-6">
         <div>
-<<<<<<< HEAD
           <p className="text-xs text-neutral-500">Rendimento</p>
           <p className="font-semibold text-neutral-900">{recipe.yield_quantity} {recipe.yield_unit}</p>
         </div>
@@ -48,19 +47,6 @@ export default async function ReceitaDetailPage({ params }: { params: { id: stri
             <p className="text-xs text-neutral-500">Tempo de Preparo</p>
             <p className="font-semibold text-neutral-900 flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-neutral-400" /> {recipe.prep_time_minutes} min
-=======
-          <p className="text-xs text-[var(--text-3)]">Rendimento</p>
-          <p className="font-semibold text-[var(--text-1)]">{recipe.yield_quantity} {recipe.yield_unit}</p>
-        </div>
-        {recipe.category && (
-          <div><p className="text-xs text-[var(--text-3)]">Categoria</p><span className="badge-gray">{recipe.category}</span></div>
-        )}
-        {recipe.prep_time_minutes && (
-          <div>
-            <p className="text-xs text-[var(--text-3)]">Tempo de Preparo</p>
-            <p className="font-semibold text-[var(--text-1)] flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-[var(--muted)]" /> {recipe.prep_time_minutes} min
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
             </p>
           </div>
         )}
@@ -69,21 +55,12 @@ export default async function ReceitaDetailPage({ params }: { params: { id: stri
       {/* Cost summary */}
       <div className="grid grid-cols-3 gap-4">
         <div className="card p-4 text-center">
-<<<<<<< HEAD
           <p className="text-xl font-display font-bold text-neutral-900">{formatCurrency(totalCost)}</p>
           <p className="text-xs text-neutral-500 mt-1">Custo Total</p>
         </div>
         <div className="card p-4 text-center">
           <p className="text-xl font-display font-bold text-neutral-900">{formatCurrency(costPerUnit)}</p>
           <p className="text-xs text-neutral-500 mt-1">Por {recipe.yield_unit}</p>
-=======
-          <p className="text-xl font-display font-bold text-[var(--text-1)]">{formatCurrency(totalCost)}</p>
-          <p className="text-xs text-[var(--text-3)] mt-1">Custo Total</p>
-        </div>
-        <div className="card p-4 text-center">
-          <p className="text-xl font-display font-bold text-[var(--text-1)]">{formatCurrency(costPerUnit)}</p>
-          <p className="text-xs text-[var(--text-3)] mt-1">Por {recipe.yield_unit}</p>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         </div>
         <div className="card p-4 text-center bg-brand-50 border-brand-200">
           <p className="text-xl font-display font-bold text-brand-600">{formatCurrency(suggestedPrice)}</p>
@@ -93,13 +70,8 @@ export default async function ReceitaDetailPage({ params }: { params: { id: stri
 
       {/* Ingredients */}
       <div className="table-container">
-<<<<<<< HEAD
         <div className="px-5 py-4 border-b border-neutral-100">
           <h3 className="font-semibold text-neutral-800">Ingredientes</h3>
-=======
-        <div className="px-5 py-4 border-b border-[var(--border-light)]">
-          <h3 className="font-semibold text-[var(--text-1)]">Ingredientes</h3>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         </div>
         <table className="table">
           <thead>
@@ -110,11 +82,7 @@ export default async function ReceitaDetailPage({ params }: { params: { id: stri
               const subtotal = (item.ingredients?.cost_per_unit ?? 0) * item.quantity
               return (
                 <tr key={item.id}>
-<<<<<<< HEAD
                   <td className="font-medium text-neutral-900">{item.ingredients?.name ?? '—'}</td>
-=======
-                  <td className="font-medium text-[var(--text-1)]">{item.ingredients?.name ?? '—'}</td>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
                   <td className="font-mono text-sm">{item.quantity} {item.unit}</td>
                   <td>{formatCurrency(item.ingredients?.cost_per_unit ?? 0)}</td>
                   <td className="font-semibold">{formatCurrency(subtotal)}</td>
@@ -123,15 +91,9 @@ export default async function ReceitaDetailPage({ params }: { params: { id: stri
             })}
           </tbody>
           <tfoot>
-<<<<<<< HEAD
             <tr className="bg-neutral-50">
               <td colSpan={3} className="px-4 py-3 font-semibold text-neutral-700">Total</td>
               <td className="px-4 py-3 font-bold text-neutral-900">{formatCurrency(totalCost)}</td>
-=======
-            <tr className="bg-[var(--hover)]">
-              <td colSpan={3} className="px-4 py-3 font-semibold text-[var(--text-2)]">Total</td>
-              <td className="px-4 py-3 font-bold text-[var(--text-1)]">{formatCurrency(totalCost)}</td>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
             </tr>
           </tfoot>
         </table>
@@ -139,13 +101,8 @@ export default async function ReceitaDetailPage({ params }: { params: { id: stri
 
       {recipe.instructions && (
         <div className="card p-5">
-<<<<<<< HEAD
           <h3 className="font-semibold text-neutral-800 mb-3">Modo de Preparo</h3>
           <p className="text-sm text-neutral-700 whitespace-pre-wrap leading-relaxed">{recipe.instructions}</p>
-=======
-          <h3 className="font-semibold text-[var(--text-1)] mb-3">Modo de Preparo</h3>
-          <p className="text-sm text-[var(--text-2)] whitespace-pre-wrap leading-relaxed">{recipe.instructions}</p>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         </div>
       )}
     </div>

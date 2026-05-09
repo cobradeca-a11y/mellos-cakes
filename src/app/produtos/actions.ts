@@ -40,3 +40,11 @@ export async function updateProduct(id: string, formData: FormData) {
   revalidatePath('/produtos')
   redirect(`/produtos/${id}`)
 }
+
+export async function deleteProduct(id: string) {
+  const supabase = createClient()
+  const { error } = await supabase.from('products').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath('/produtos')
+  redirect('/produtos')
+}

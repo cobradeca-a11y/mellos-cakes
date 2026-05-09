@@ -25,11 +25,7 @@ export function IngredientForm({ action, suppliers, defaultValues = {} }: Ingred
   return (
     <form action={action} className="space-y-5">
       <div className="card p-6 space-y-4">
-<<<<<<< HEAD
         <h3 className="font-semibold text-neutral-800">Identificação</h3>
-=======
-        <h3 className="font-semibold text-[var(--text-1)]">Identificação</h3>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <label className="label">Nome *</label>
@@ -53,11 +49,7 @@ export function IngredientForm({ action, suppliers, defaultValues = {} }: Ingred
       </div>
 
       <div className="card p-6 space-y-4">
-<<<<<<< HEAD
         <h3 className="font-semibold text-neutral-800">Estoque & Custo</h3>
-=======
-        <h3 className="font-semibold text-[var(--text-1)]">Estoque & Custo</h3>
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
             <label className="label">Unidade de Medida *</label>

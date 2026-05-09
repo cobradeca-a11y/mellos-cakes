@@ -4,19 +4,10 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-<<<<<<< HEAD
-=======
-const BUSINESS_ID = '1d8de479-7996-4868-b2d1-c277b5a7fb73'
-
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
 export async function createRecipe(formData: FormData) {
   const supabase = createClient()
 
   const data = {
-<<<<<<< HEAD
-=======
-    business_id: BUSINESS_ID,
->>>>>>> d3a4002f570254ccbd9fca20bb1eb22501a65fb0
     name: formData.get('name') as string,
     category: formData.get('category') as string || null,
     yield_quantity: Number(formData.get('yield_quantity') ?? 1),
