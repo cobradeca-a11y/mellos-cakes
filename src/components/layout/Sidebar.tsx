@@ -25,7 +25,6 @@ const navGroups = [
       { href: '/orcamentos', icon: FileText, label: 'Orçamentos' },
       { href: '/pedidos', icon: ClipboardList, label: 'Pedidos' },
       { href: '/entregas', icon: Truck, label: 'Entregas' },
-      { href: '/inteligencia-vendas', icon: BrainCircuit, label: 'Inteligência de Vendas' },
     ],
   },
   {
@@ -57,7 +56,10 @@ const navGroups = [
   },
   {
     label: 'Marketing',
-    items: [{ href: '/social', icon: Megaphone, label: 'Redes Sociais' }],
+    items: [
+      { href: '/social', icon: Megaphone, label: 'Redes Sociais' },
+      { href: '/inteligencia-vendas', icon: BrainCircuit, label: 'Inteligência de Marketing' },
+    ],
   },
   {
     label: null,
