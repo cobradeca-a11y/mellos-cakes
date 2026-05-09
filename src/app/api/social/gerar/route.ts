@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 export const runtime = 'edge'
 
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY ?? ''
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL ?? ''
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mellos-cakes.vercel.app'
+const APP_TITLE = 'MellosCakes - Gerador de Conteúdo'
 
 const SYSTEM = `Você é especialista em marketing digital para confeitarias artesanais brasileiras.
 Cria conteúdo real, direto e humano para vender bolos, tortas e doces.
@@ -28,9 +31,90 @@ const FORMATOS: Record<string,string> = {
   mensagem: 'Mensagem de WhatsApp direta e persuasiva',
 }
 
+type RequestPayload = {
+  motor?: string
+  formato?: string
+  canal?: string
+  produto?: string
+  tipo_produto?: string
+  publico?: string
+  objetivo?: string
+  tom?: string
+  cta?: string
+  link_whatsapp?: string
+  observacoes?: string
+  conteudo_original?: string
+}
+
+function getFallbackContent({
+  motor='venda', formato='post', canal='instagram', produto='', link_whatsapp='', cta,
+}: RequestPayload) {
+  const isVideo     = formato==='reels' || formato==='shorts'
+  const isCarrossel = formato==='carrossel'
+  const isStory     = formato==='story'
+
+  return {
+    titulo: `${produto} — Conteúdo de ${motor}`,
+    texto_principal: `🎂 ${produto} artesanal feito com carinho!\n\nCada camada foi pensada para entregar sabor, cremosidade e aquela vontade de repetir.\n\nFaça sua encomenda pelo WhatsApp ${link_whatsapp ?? ''}`,
+    legenda: `Seu ${produto} perfeito está aqui! 🎂✨ Feito com capricho, recheio generoso e sabor de verdade. Faça sua encomenda e garanta o seu!`,
+    hashtags: '#melloscakes #bolodepote #confeitariaartesanal #docesartesanais #riograndeRS #feitocomcarinho',
+    cta: cta ?? 'Encomendar pelo WhatsApp agora!',
+    roteiro: isVideo ? '1. Mostrar o produto finalizado\n2. Aproximar nas camadas e textura\n3. Mostrar uma colherada ou detalhe do recheio\n4. Fechar com chamada para encomenda no WhatsApp' : null,
+    slides: isCarrossel ? [
+      { titulo: `${produto} chegou!`, texto: 'Camadas cremosas e sabor marcante.' },
+      { titulo: 'Feito com capricho', texto: 'Produção artesanal e apresentação impecável.' },
+      { titulo: 'Pronto para saborear', texto: 'Ideal para pedir para você ou presentear.' },
+      { titulo: 'Peça o seu', texto: link_whatsapp || 'Chame no WhatsApp e faça sua encomenda.' },
+    ] : null,
+    stories: isStory ? [
+      { tela:1, texto:`Hoje tem ${produto}! 🎂`, acao:'Mostrar o produto' },
+      { tela:2, texto:'Cremoso, bonito e feito com carinho.', acao:'Mostrar detalhes das camadas' },
+      { tela:3, texto:'Quer o seu?', acao:'Chamar no WhatsApp' },
+    ] : null,
+    melhor_rede: canal === 'youtube' ? 'YouTube Shorts' : canal.charAt(0).toUpperCase() + canal.slice(1),
+    melhor_horario: '18h–21h',
+    dica: 'Revise o texto antes de publicar e adapte o WhatsApp/valor conforme a campanha do dia.',
+  }
+}
+
+function getCandidateModels() {
+  return [
+    OPENROUTER_MODEL,
+    'openrouter/auto',
+  ].filter(Boolean)
+}
+
+async function callOpenRouter(model: string, prompt: string) {
+  return fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENROUTER_KEY}`,
+      'HTTP-Referer': SITE_URL,
+      'X-Title': APP_TITLE,
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 1500,
+      messages: [
+        { role: 'system', content: SYSTEM },
+        { role: 'user',   content: prompt },
+      ],
+    }),
+  })
+}
+
+function parseModelText(rawText: string) {
+  try { return JSON.parse(rawText) }
+  catch {
+    const match = rawText.match(/\{[\s\S]*\}/)
+    try { return match ? JSON.parse(match[0]) : null } catch { return null }
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
+    const body: RequestPayload = await req.json()
     const {
       motor='venda', formato='post', canal='instagram',
       produto, tipo_produto, publico='pessoas que amam bolos artesanais',
@@ -61,69 +145,42 @@ JSON exato (sem nada fora):
     if (!OPENROUTER_KEY) {
       return NextResponse.json({
         ok: true,
-        conteudo: {
-          titulo: `${produto} — Conteúdo de ${motor}`,
-          texto_principal: `🎂 ${produto} artesanal feito com amor!\n\nCada detalhe pensado pra você. Encomende já e garanta o seu!\n\nEntre em contato pelo WhatsApp ${link_whatsapp??''}`,
-          legenda: `Seu ${produto} perfeito está aqui! 🎂✨ Feito com os melhores ingredientes, personalizado do seu jeito. Faça já sua encomenda!`,
-          hashtags: '#confeitaria #boloartesanal #bolopersonalizado #bolodelicioso #confeitariaartesanal #feitocomamor',
-          cta: cta ?? 'Encomendar pelo WhatsApp agora!',
-          roteiro: isVideo ? '1. Mostrar o bolo finalizado\n2. Cortar uma fatia\n3. Mostrar o recheio\n4. Chamar para o WhatsApp' : null,
-          slides: isCarrossel ? [
-            { titulo: `${produto} chegou!`, texto: 'Feito com ingredientes selecionados' },
-            { titulo: 'Como encomendar?', texto: 'Simples! Mande mensagem no WhatsApp' },
-            { titulo: 'Personalizado', texto: 'Do seu jeito, do seu tamanho' },
-            { titulo: 'Encomende já!', texto: link_whatsapp ?? 'WhatsApp no perfil' },
-          ] : null,
-          stories: isStory ? [
-            { tela:1, texto:`${produto} chegou! 🎂`, acao:'Arraste para ver mais' },
-            { tela:2, texto:'Feito com amor e ingredientes de qualidade', acao:'Continue assistindo' },
-            { tela:3, texto:'Encomende pelo WhatsApp!', acao:'Clique no link da bio' },
-          ] : null,
-          melhor_rede: 'Instagram',
-          melhor_horario: '18h–21h',
-          dica: '⚠️ Configure a variável OPENROUTER_API_KEY na Vercel para geração real com IA.',
-        },
-        aviso: 'Conteúdo de demonstração. Configure OPENROUTER_API_KEY na Vercel para IA real.'
+        conteudo: getFallbackContent(body),
+        aviso: 'Conteúdo de demonstração. Configure OPENROUTER_API_KEY na Vercel para geração real com IA.'
       })
     }
 
-    // ✅ OpenRouter — formato OpenAI, modelos gratuitos disponíveis
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENROUTER_KEY}`,
-        'HTTP-Referer': 'https://seusite.com.br', // opcional mas recomendado
-        'X-Title': 'Gerador de Conteúdo',          // aparece no dashboard do OpenRouter
-      },
-      body: JSON.stringify({
-        model: 'google/gemma-3-27b-it:free', // modelo gratuito — veja opções abaixo
-        max_tokens: 1500,
-        messages: [
-          { role: 'system', content: SYSTEM },
-          { role: 'user',   content: prompt },
-        ],
-      }),
+    const errors: string[] = []
+
+    for (const model of getCandidateModels()) {
+      const response = await callOpenRouter(model, prompt)
+
+      if (!response.ok) {
+        const err = await response.text()
+        errors.push(`${model}: ${err.slice(0, 220)}`)
+        continue
+      }
+
+      const data = await response.json()
+      const rawText = data.choices?.[0]?.message?.content ?? '{}'
+      const parsed = parseModelText(rawText)
+
+      if (parsed) {
+        return NextResponse.json({
+          ok: true,
+          conteudo: parsed,
+          modelo_usado: model,
+        })
+      }
+
+      errors.push(`${model}: resposta da IA não veio em JSON válido`)
+    }
+
+    return NextResponse.json({
+      ok: true,
+      conteudo: getFallbackContent(body),
+      aviso: `⚠️ A IA não respondeu com um modelo disponível. Foi gerado um conteúdo temporário. Configure OPENROUTER_MODEL na Vercel com um modelo ativo do OpenRouter. Último erro: ${errors.at(-1) ?? 'modelo indisponível'}`,
     })
-
-    if (!response.ok) {
-      const err = await response.text()
-      return NextResponse.json({ ok:false, erro:`Erro na API: ${err.slice(0,200)}` }, { status:500 })
-    }
-
-    const data = await response.json()
-    const rawText = data.choices?.[0]?.message?.content ?? '{}'
-
-    let parsed: any
-    try { parsed = JSON.parse(rawText) }
-    catch {
-      const match = rawText.match(/\{[\s\S]*\}/)
-      try { parsed = match ? JSON.parse(match[0]) : null } catch { parsed = null }
-    }
-
-    if (!parsed) return NextResponse.json({ ok:false, erro:'Falha ao interpretar resposta da IA.' }, { status:500 })
-
-    return NextResponse.json({ ok:true, conteudo: parsed })
 
   } catch (err: any) {
     return NextResponse.json({ ok:false, erro: err.message }, { status:500 })
