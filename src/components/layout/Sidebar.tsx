@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, BarChart2, Users, ShoppingBag, Cookie, BookOpen,
   ClipboardList, ShoppingCart, Truck, CalendarDays, DollarSign,
-  Megaphone, Settings, FileText, Building2, Package, X, Menu, ReceiptText
+  Megaphone, Settings, FileText, Building2, Package, X, Menu, ReceiptText, BrainCircuit
 } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
@@ -25,6 +25,7 @@ const navGroups = [
       { href: '/orcamentos', icon: FileText, label: 'Orçamentos' },
       { href: '/pedidos', icon: ClipboardList, label: 'Pedidos' },
       { href: '/entregas', icon: Truck, label: 'Entregas' },
+      { href: '/inteligencia-vendas', icon: BrainCircuit, label: 'Inteligência de Vendas' },
     ],
   },
   {
