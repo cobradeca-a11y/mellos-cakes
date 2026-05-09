@@ -7,27 +7,29 @@ const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL ?? ''
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mellos-cakes.vercel.app'
 const APP_TITLE = 'MellosCakes - Gerador de Conteúdo'
 
-const SYSTEM = `Você é especialista em marketing digital para confeitarias artesanais brasileiras.
-Cria conteúdo real, direto e humano para vender bolos, tortas e doces.
-Priorize sempre o WhatsApp como canal de contato.
-Use linguagem simples, comercial e próxima. Sem exageros.
+const SYSTEM = `Você é especialista sênior em marketing digital para confeitarias artesanais brasileiras.
+Cria conteúdo real, direto, humano e profissional para vender bolos de pote, bolos, tortas e doces.
+Priorize WhatsApp como canal de conversão, mas entregue também direção criativa para imagem/vídeo.
+Nunca invente informação que o usuário não forneceu: preço, desconto, endereço, estoque, prazo ou sabor não informado.
+Use linguagem simples, comercial e próxima, sem exageros vazios.
+HASHTAGS: sempre comece cada hashtag com #, separe por espaço e nunca junte palavras sem #.
 RESPONDA APENAS EM JSON VÁLIDO. Sem markdown, sem texto fora do JSON.`
 
 const MOTORES: Record<string,string> = {
-  venda:           'Gere conteúdo DIRETO para VENDER. Desperte desejo e leve à ação imediata.',
-  engajamento:     'Gere ENGAJAMENTO: perguntas, enquetes e interação. Não venda diretamente.',
-  prova_social:    'Gere PROVA SOCIAL com depoimentos, bastidores e entregas.',
-  educativo:       'Gere conteúdo EDUCATIVO explicando sabores, tamanhos, recheios e prazos.',
-  promocional:     'Gere conteúdo PROMOCIONAL para desconto, combo ou oferta com urgência.',
-  reaproveitamento:'ADAPTE o conteúdo fornecido para outra rede mantendo a essência.',
+  venda:           'Gere conteúdo DIRETO para VENDER. Desperte desejo, destaque diferenciais e leve à ação imediata.',
+  engajamento:     'Gere ENGAJAMENTO com perguntas, enquetes, caixa de perguntas e interação. Venda de forma indireta.',
+  prova_social:    'Gere PROVA SOCIAL com depoimentos, bastidores, preparação e confiança.',
+  educativo:       'Gere conteúdo EDUCATIVO explicando sabores, tamanhos, recheios, conservação, validade e prazos quando informados.',
+  promocional:     'Gere conteúdo PROMOCIONAL para combo, desconto ou oferta. Use urgência apenas se houver base nas observações.',
+  reaproveitamento:'ADAPTE o conteúdo fornecido para outra rede mantendo a essência e ajustando formato, CTA e linguagem.',
 }
 
 const FORMATOS: Record<string,string> = {
   post:     'Post estático para o feed',
-  reels:    'Roteiro de Reels com cenas numeradas (max 60s)',
-  story:    'Sequência de 3 a 5 stories com texto e ação em cada tela',
-  carrossel:'Carrossel de 4 a 6 slides com título e texto por slide',
-  shorts:   'Roteiro de YouTube Shorts com cenas e narração',
+  reels:    'Roteiro de Reels com cenas numeradas, gancho inicial e CTA final (max 60s)',
+  story:    'Sequência de 3 a 5 stories com texto, interação e ação em cada tela',
+  carrossel:'Carrossel de 4 a 6 slides com título, texto e intenção de cada slide',
+  shorts:   'Roteiro de YouTube Shorts com cenas, narração e CTA',
   mensagem: 'Mensagem de WhatsApp direta e persuasiva',
 }
 
@@ -46,18 +48,90 @@ type RequestPayload = {
   conteudo_original?: string
 }
 
-function getFallbackContent({
-  motor='venda', formato='post', canal='instagram', produto='', link_whatsapp='', cta,
-}: RequestPayload) {
+function normalizeHashtags(value: unknown) {
+  if (!value) return '#melloscakes #bolodepote #confeitariaartesanal #docesartesanais #feitoComCarinho'
+
+  if (Array.isArray(value)) {
+    return value
+      .map(tag => String(tag).trim())
+      .filter(Boolean)
+      .map(tag => tag.startsWith('#') ? tag : `#${tag.replace(/^#+/, '')}`)
+      .join(' ')
+  }
+
+  const raw = String(value).trim()
+  const tokens = raw
+    .replace(/,/g, ' ')
+    .split(/\s+/)
+    .map(tag => tag.trim())
+    .filter(Boolean)
+
+  if (tokens.length > 1) {
+    return tokens.map(tag => tag.startsWith('#') ? tag : `#${tag.replace(/^#+/, '')}`).join(' ')
+  }
+
+  if (raw.includes('#')) {
+    return raw
+      .split('#')
+      .map(tag => tag.trim())
+      .filter(Boolean)
+      .map(tag => `#${tag.replace(/\s+/g, '')}`)
+      .join(' ')
+  }
+
+  return raw.startsWith('#') ? raw : `#${raw}`
+}
+
+function enhanceContent(content: any, body: RequestPayload) {
+  const canal = body.canal ?? 'instagram'
+  const produto = body.produto ?? 'produto'
+  const formato = body.formato ?? 'post'
+  const isLaunch = /lançamento|novo sabor|sabor novo|novidade|estreia/i.test(`${body.observacoes ?? ''} ${produto}`)
+
+  return {
+    titulo: content?.titulo ?? `${produto} — Conteúdo profissional`,
+    texto_principal: content?.texto_principal ?? `🎂 ${produto} feito com capricho para deixar seu dia mais gostoso.`,
+    legenda: content?.legenda ?? `Seu ${produto} está esperando por você. Faça sua encomenda pelo WhatsApp!`,
+    hashtags: normalizeHashtags(content?.hashtags),
+    cta: content?.cta ?? body.cta ?? 'Pedir pelo WhatsApp agora',
+    roteiro: content?.roteiro ?? null,
+    slides: content?.slides ?? null,
+    stories: content?.stories ?? null,
+    melhor_rede: content?.melhor_rede ?? (canal === 'youtube' ? 'YouTube Shorts' : canal.charAt(0).toUpperCase() + canal.slice(1)),
+    melhor_horario: content?.melhor_horario ?? '18h–21h',
+    dica: content?.dica ?? 'Use foto clara, aproximada e com foco nas camadas/recheio para aumentar desejo.',
+    prompt_imagem: content?.prompt_imagem ?? `Foto profissional e apetitosa de ${produto}, embalagem limpa, iluminação natural suave, fundo de confeitaria artesanal, foco nas camadas e textura cremosa, composição vertical para ${canal}, sem textos na imagem.`,
+    texto_na_arte: content?.texto_na_arte ?? `Hoje tem ${produto}`,
+    fundo_visual: content?.fundo_visual ?? 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto.',
+    interacoes: content?.interacoes ?? {
+      enquete: `Você provaria ${produto} hoje?`,
+      opcoes: ['Sim, eu quero!', 'Quero ver sabores'],
+      caixa_pergunta: 'Qual sabor você quer ver por aqui?',
+      contagem_regressiva: isLaunch ? `Lançamento de ${produto}` : null,
+    },
+    checklist_publicacao: content?.checklist_publicacao ?? [
+      'Usar foto nítida do produto real',
+      'Conferir WhatsApp/CTA antes de publicar',
+      'Postar no horário sugerido',
+      formato === 'story' ? 'Adicionar enquete ou caixa de pergunta' : 'Responder comentários e directs rapidamente',
+    ],
+  }
+}
+
+function getFallbackContent(body: RequestPayload) {
+  const {
+    motor='venda', formato='post', canal='instagram', produto='', link_whatsapp='', cta,
+  } = body
   const isVideo     = formato==='reels' || formato==='shorts'
   const isCarrossel = formato==='carrossel'
   const isStory     = formato==='story'
+  const isLaunch = /lançamento|novo sabor|sabor novo|novidade|estreia/i.test(`${body.observacoes ?? ''} ${produto}`)
 
-  return {
+  return enhanceContent({
     titulo: `${produto} — Conteúdo de ${motor}`,
     texto_principal: `🎂 ${produto} artesanal feito com carinho!\n\nCada camada foi pensada para entregar sabor, cremosidade e aquela vontade de repetir.\n\nFaça sua encomenda pelo WhatsApp ${link_whatsapp ?? ''}`,
     legenda: `Seu ${produto} perfeito está aqui! 🎂✨ Feito com capricho, recheio generoso e sabor de verdade. Faça sua encomenda e garanta o seu!`,
-    hashtags: '#melloscakes #bolodepote #confeitariaartesanal #docesartesanais #riograndeRS #feitocomcarinho',
+    hashtags: '#melloscakes #bolodepote #confeitariaartesanal #docesartesanais #riograndeRS #feitoComCarinho',
     cta: cta ?? 'Encomendar pelo WhatsApp agora!',
     roteiro: isVideo ? '1. Mostrar o produto finalizado\n2. Aproximar nas camadas e textura\n3. Mostrar uma colherada ou detalhe do recheio\n4. Fechar com chamada para encomenda no WhatsApp' : null,
     slides: isCarrossel ? [
@@ -68,13 +142,22 @@ function getFallbackContent({
     ] : null,
     stories: isStory ? [
       { tela:1, texto:`Hoje tem ${produto}! 🎂`, acao:'Mostrar o produto' },
-      { tela:2, texto:'Cremoso, bonito e feito com carinho.', acao:'Mostrar detalhes das camadas' },
-      { tela:3, texto:'Quer o seu?', acao:'Chamar no WhatsApp' },
+      { tela:2, texto:'Cremoso, bonito e feito com carinho.', acao:'Adicionar enquete: qual camada você provaria primeiro?' },
+      { tela:3, texto:'Encomende pelo WhatsApp!', acao:'Usar sticker de link ou botão de mensagem' },
     ] : null,
     melhor_rede: canal === 'youtube' ? 'YouTube Shorts' : canal.charAt(0).toUpperCase() + canal.slice(1),
     melhor_horario: '18h–21h',
-    dica: 'Revise o texto antes de publicar e adapte o WhatsApp/valor conforme a campanha do dia.',
-  }
+    dica: 'Use foto clara, aproximada e com foco nas camadas/recheio para aumentar desejo.',
+    prompt_imagem: `Foto profissional e apetitosa de ${produto}, embalagem limpa, iluminação natural suave, fundo de confeitaria artesanal, foco nas camadas e textura cremosa, composição vertical para ${canal}, sem textos na imagem.`,
+    texto_na_arte: isLaunch ? `Novo sabor: ${produto}` : `Hoje tem ${produto}`,
+    fundo_visual: 'Fundo claro, limpo e artesanal, com tons quentes, boa iluminação e destaque total para o produto.',
+    interacoes: {
+      enquete: `Você provaria ${produto} hoje?`,
+      opcoes: ['Sim, eu quero!', 'Quero ver sabores'],
+      caixa_pergunta: 'Qual sabor você quer ver por aqui?',
+      contagem_regressiva: isLaunch ? `Lançamento de ${produto}` : null,
+    },
+  }, body)
 }
 
 function getCandidateModels() {
@@ -95,7 +178,7 @@ async function callOpenRouter(model: string, prompt: string) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 1500,
+      max_tokens: 2200,
       messages: [
         { role: 'system', content: SYSTEM },
         { role: 'user',   content: prompt },
@@ -130,17 +213,32 @@ export async function POST(req: NextRequest) {
     const isCarrossel = formato==='carrossel'
     const isStory     = formato==='story'
 
-    const prompt = `Motor: ${MOTORES[motor]??MOTORES.venda}
+    const prompt = `Motor estratégico: ${MOTORES[motor]??MOTORES.venda}
 Rede: ${canal} | Formato: ${FORMATOS[formato]??'Post'}
 Produto: ${produto} | Tipo: ${tipo_produto??'confeitaria'}
 Público: ${publico}
 Objetivo: ${objetivo??'gerar vendas'}
 Tom: ${tom} | CTA: ${cta??'Encomendar pelo WhatsApp'}
-WhatsApp: ${link_whatsapp??''} | Obs: ${observacoes??''}
-${conteudo_original?`Original:\n${conteudo_original}`:''}
+WhatsApp: ${link_whatsapp??''} | Observações: ${observacoes??''}
+${conteudo_original?`Conteúdo original para reaproveitar:\n${conteudo_original}`:''}
+
+Crie uma geração PROFISSIONAL completa para publicação.
+Inclua:
+1. Texto principal persuasivo, humano e direto.
+2. Legenda pronta para publicar.
+3. Hashtags obrigatoriamente separadas por espaço, cada uma começando com #.
+4. CTA claro para WhatsApp.
+5. Melhor horário para postar, com justificativa curta.
+6. Prompt visual para gerar/criar fundo/imagem da publicação.
+7. Texto curto para colocar dentro da arte, se fizer sentido.
+8. Direção de fundo visual: cores, iluminação, composição e destaque do produto.
+9. Interações: enquete, opções de resposta, caixa de pergunta e contagem regressiva apenas se for lançamento/sabor novo.
+10. Checklist de publicação.
 
 JSON exato (sem nada fora):
-{"titulo":"...","texto_principal":"...","legenda":"...","hashtags":"...","cta":"...","roteiro":${isVideo?'"..."':'null'},"slides":${isCarrossel?'[{"titulo":"","texto":""}]':'null'},"stories":${isStory?'[{"tela":1,"texto":"","acao":""}]':'null'},"melhor_rede":"...","melhor_horario":"...","dica":"..."}`
+{"titulo":"...","texto_principal":"...","legenda":"...","hashtags":"#tag1 #tag2 #tag3","cta":"...","roteiro":${isVideo?'"..."':'null'},"slides":${isCarrossel?'[{"titulo":"","texto":"","intencao":""}]':'null'},"stories":${isStory?'[{"tela":1,"texto":"","acao":"","sticker":""}]':'null'},"melhor_rede":"...","melhor_horario":"...","dica":"...","prompt_imagem":"...","texto_na_arte":"...","fundo_visual":"...","interacoes":{"enquete":"...","opcoes":["...","..."],"caixa_pergunta":"...","contagem_regressiva":null},"checklist_publicacao":["...","...","..."]}`
+
+Nunca retorne hashtags juntas como uma palavra única. Nunca omita o #.`
 
     if (!OPENROUTER_KEY) {
       return NextResponse.json({
@@ -168,7 +266,7 @@ JSON exato (sem nada fora):
       if (parsed) {
         return NextResponse.json({
           ok: true,
-          conteudo: parsed,
+          conteudo: enhanceContent(parsed, body),
           modelo_usado: model,
         })
       }
