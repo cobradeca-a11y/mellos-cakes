@@ -8,8 +8,10 @@ import {
   ClipboardList, ShoppingCart, Truck, CalendarDays, DollarSign,
   Megaphone, Settings, FileText, Building2, Package, X, Menu
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+
+const SIDEBAR_SCROLL_KEY = 'melloscakes:sidebar-scroll-top'
 
 const navGroups = [
   {
@@ -66,6 +68,23 @@ const navGroups = [
 
 function NavContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname()
+  const navRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    const nav = navRef.current
+    if (!nav) return
+
+    const savedScrollTop = Number(sessionStorage.getItem(SIDEBAR_SCROLL_KEY) ?? 0)
+    requestAnimationFrame(() => {
+      nav.scrollTop = savedScrollTop
+    })
+  }, [])
+
+  function saveSidebarScroll() {
+    const nav = navRef.current
+    if (!nav) return
+    sessionStorage.setItem(SIDEBAR_SCROLL_KEY, String(nav.scrollTop))
+  }
 
   return (
     <>
@@ -89,7 +108,7 @@ function NavContent({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3">
+      <nav ref={navRef} onScroll={saveSidebarScroll} className="flex-1 overflow-y-auto py-4 px-3">
         {navGroups.map((group, gi) => (
           <div key={gi} className={cn(gi > 0 && 'mt-4')}>
             {group.label && (
@@ -103,7 +122,10 @@ function NavContent({ onClose }: { onClose?: () => void }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={onClose}
+                  onClick={() => {
+                    saveSidebarScroll()
+                    onClose?.()
+                  }}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150 mb-0.5',
                     active
