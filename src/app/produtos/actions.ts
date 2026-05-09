@@ -7,6 +7,10 @@ import { redirect } from 'next/navigation'
 const BUSINESS_ID = '1d8de479-7996-4868-b2d1-c277b5a7fb73'
 const PRODUCT_IMAGES_BUCKET = 'products'
 
+function getBooleanField(formData: FormData, name: string) {
+  return formData.getAll(name).includes('true')
+}
+
 function getProductPayload(formData: FormData) {
   return {
     business_id: BUSINESS_ID,
@@ -15,8 +19,8 @@ function getProductPayload(formData: FormData) {
     description: ((formData.get('description') as string) || '').trim() || null,
     base_price: Number(formData.get('base_price') ?? 0),
     min_production_days: Number(formData.get('min_production_days') ?? 3),
-    available: formData.get('available') === 'true',
-    featured: formData.get('featured') === 'true',
+    available: getBooleanField(formData, 'available'),
+    featured: getBooleanField(formData, 'featured'),
   }
 }
 
