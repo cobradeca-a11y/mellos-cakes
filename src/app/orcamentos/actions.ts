@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+const BUSINESS_ID = '1d8de479-7996-4868-b2d1-c277b5a7fb73'
+
 function generateQuoteNumber() {
   const d = new Date()
   return `ORC${d.getFullYear().toString().slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}${Math.floor(Math.random()*9000+1000)}`
@@ -12,6 +14,7 @@ function generateQuoteNumber() {
 export async function createQuote(formData: FormData) {
   const supabase = createClient()
   const { data: quote, error } = await supabase.from('quotes').insert({
+    business_id: BUSINESS_ID,
     customer_id: formData.get('customer_id') as string || null,
     quote_number: generateQuoteNumber(),
     status: 'rascunho',

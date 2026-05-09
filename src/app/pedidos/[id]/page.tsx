@@ -36,7 +36,7 @@ export default async function PedidoDetailPage({ params }: { params: { id: strin
           <Link href="/pedidos" className="btn-ghost"><ArrowLeft className="w-4 h-4" /></Link>
           <div>
             <h1 className="page-title font-mono">#{order.order_number}</h1>
-            <p className="text-sm text-neutral-500">{order.customers?.name}</p>
+            <p className="text-sm text-[var(--text-3)]">{order.customers?.name}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -57,22 +57,22 @@ export default async function PedidoDetailPage({ params }: { params: { id: strin
       {/* Status & Dates */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="card p-4">
-          <p className="text-xs text-neutral-500 mb-1">Status</p>
+          <p className="text-xs text-[var(--text-3)] mb-1">Status</p>
           <span className={`status-${order.status} text-sm`}>{statusLabel[order.status]}</span>
         </div>
         <div className="card p-4">
-          <p className="text-xs text-neutral-500 mb-1">Entrega</p>
-          <p className="text-sm font-semibold text-neutral-900 flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+          <p className="text-xs text-[var(--text-3)] mb-1">Entrega</p>
+          <p className="text-sm font-semibold text-[var(--text-1)] flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-[var(--muted)]" />
             {formatDateTime(order.delivery_date)}
           </p>
         </div>
         <div className="card p-4">
-          <p className="text-xs text-neutral-500 mb-1">Total</p>
-          <p className="text-sm font-bold text-neutral-900">{formatCurrency(order.total_amount)}</p>
+          <p className="text-xs text-[var(--text-3)] mb-1">Total</p>
+          <p className="text-sm font-bold text-[var(--text-1)]">{formatCurrency(order.total_amount)}</p>
         </div>
         <div className="card p-4">
-          <p className="text-xs text-neutral-500 mb-1">Saldo Pendente</p>
+          <p className="text-xs text-[var(--text-3)] mb-1">Saldo Pendente</p>
           <p className={`text-sm font-bold ${order.balance_due > 0 ? 'text-red-500' : 'text-green-600'}`}>
             {order.balance_due > 0 ? formatCurrency(order.balance_due) : 'Pago ✓'}
           </p>
@@ -81,8 +81,8 @@ export default async function PedidoDetailPage({ params }: { params: { id: strin
 
       {/* Financial breakdown */}
       <div className="card p-5">
-        <h3 className="font-semibold text-neutral-800 mb-4 flex items-center gap-2">
-          <DollarSign className="w-4 h-4 text-neutral-400" /> Financeiro
+        <h3 className="font-semibold text-[var(--text-1)] mb-4 flex items-center gap-2">
+          <DollarSign className="w-4 h-4 text-[var(--muted)]" /> Financeiro
         </h3>
         <div className="space-y-2 text-sm">
           {[
@@ -94,8 +94,8 @@ export default async function PedidoDetailPage({ params }: { params: { id: strin
             ...(margin ? [{ label: 'Margem Bruta', value: `${margin}%`, green: true }] : []),
           ].map(r => (
             <div key={r.label} className="flex justify-between py-1.5 border-b border-neutral-50 last:border-0">
-              <span className="text-neutral-500">{r.label}</span>
-              <span className={`font-medium ${r.bold ? 'text-neutral-900' : r.red ? 'text-red-500' : (r as any).green ? 'text-green-600' : 'text-neutral-700'}`}>
+              <span className="text-[var(--text-3)]">{r.label}</span>
+              <span className={`font-medium ${r.bold ? 'text-[var(--text-1)]' : r.red ? 'text-red-500' : (r as any).green ? 'text-green-600' : 'text-[var(--text-2)]'}`}>
                 {r.value}
               </span>
             </div>
@@ -106,20 +106,20 @@ export default async function PedidoDetailPage({ params }: { params: { id: strin
       {/* Client */}
       {order.customers && (
         <div className="card p-5">
-          <h3 className="font-semibold text-neutral-800 mb-3 flex items-center gap-2">
-            <User className="w-4 h-4 text-neutral-400" /> Cliente
+          <h3 className="font-semibold text-[var(--text-1)] mb-3 flex items-center gap-2">
+            <User className="w-4 h-4 text-[var(--muted)]" /> Cliente
           </h3>
-          <p className="font-medium text-neutral-900">{order.customers.name}</p>
-          {order.customers.phone && <p className="text-sm text-neutral-500">{order.customers.phone}</p>}
-          {order.customers.email && <p className="text-sm text-neutral-500">{order.customers.email}</p>}
+          <p className="font-medium text-[var(--text-1)]">{order.customers.name}</p>
+          {order.customers.phone && <p className="text-sm text-[var(--text-3)]">{order.customers.phone}</p>}
+          {order.customers.email && <p className="text-sm text-[var(--text-3)]">{order.customers.email}</p>}
         </div>
       )}
 
       {/* Notes */}
       {order.notes && (
         <div className="card p-5">
-          <h3 className="font-semibold text-neutral-800 mb-2">Observações</h3>
-          <p className="text-sm text-neutral-700 whitespace-pre-wrap">{order.notes}</p>
+          <h3 className="font-semibold text-[var(--text-1)] mb-2">Observações</h3>
+          <p className="text-sm text-[var(--text-2)] whitespace-pre-wrap">{order.notes}</p>
         </div>
       )}
     </div>

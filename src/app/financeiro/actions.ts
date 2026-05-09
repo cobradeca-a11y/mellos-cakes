@@ -22,7 +22,6 @@ export async function createEntry(formData: FormData) {
   const { error } = await supabase.from('cashflow_entries').insert(data)
   if (error) throw new Error(error.message)
   revalidatePath('/financeiro')
-  revalidatePath('/gastos')
   redirect('/financeiro')
 }
 
@@ -41,6 +40,5 @@ export async function updateEntry(id: string, formData: FormData) {
   const { error } = await supabase.from('cashflow_entries').update(data).eq('id', id)
   if (error) throw new Error(error.message)
   revalidatePath('/financeiro')
-  revalidatePath('/gastos')
   redirect('/financeiro')
 }

@@ -36,7 +36,7 @@ export default async function EntregasPage({ searchParams }: { searchParams: { s
       <div className="page-header">
         <div>
           <h1 className="page-title">Entregas</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">{count ?? 0} entregas</p>
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{count ?? 0} entregas</p>
         </div>
       </div>
 
@@ -55,7 +55,7 @@ export default async function EntregasPage({ searchParams }: { searchParams: { s
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {(deliveries ?? []).length === 0 ? (
-          <div className="col-span-2 card p-12 text-center text-neutral-400">
+          <div className="col-span-2 card p-12 text-center text-[var(--muted)]">
             <Truck className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p>Nenhuma entrega encontrada</p>
           </div>
@@ -70,32 +70,32 @@ export default async function EntregasPage({ searchParams }: { searchParams: { s
               </div>
 
               <div>
-                <p className="font-semibold text-neutral-900">{d.orders?.customers?.name ?? '—'}</p>
+                <p className="font-semibold text-[var(--text-1)]">{d.orders?.customers?.name ?? '—'}</p>
                 <Link href={`/pedidos/${d.order_id}`} className="text-sm text-brand-500 font-mono hover:underline">
                   #{d.orders?.order_number}
                 </Link>
               </div>
 
-              <div className="space-y-1.5 text-sm text-neutral-600">
+              <div className="space-y-1.5 text-sm text-[var(--text-3)]">
                 {d.scheduled_at && (
                   <p className="flex items-center gap-2">
-                    <Truck className="w-4 h-4 text-neutral-400" />
+                    <Truck className="w-4 h-4 text-[var(--muted)]" />
                     {formatDateTime(d.scheduled_at)}
                   </p>
                 )}
                 {d.contact_phone && (
                   <a href={`tel:${d.contact_phone}`} className="flex items-center gap-2 hover:text-brand-500">
-                    <Phone className="w-4 h-4 text-neutral-400" /> {d.contact_phone}
+                    <Phone className="w-4 h-4 text-[var(--muted)]" /> {d.contact_phone}
                   </a>
                 )}
                 {d.address && (
                   <p className="flex items-start gap-2">
-                    <MapPin className="w-4 h-4 text-neutral-400 mt-0.5 shrink-0" />
+                    <MapPin className="w-4 h-4 text-[var(--muted)] mt-0.5 shrink-0" />
                     <span>{typeof d.address === 'string' ? d.address : JSON.stringify(d.address)}</span>
                   </p>
                 )}
                 {d.delivery_fee > 0 && (
-                  <p className="text-xs text-neutral-400">Taxa: R$ {d.delivery_fee.toFixed(2)}</p>
+                  <p className="text-xs text-[var(--muted)]">Taxa: R$ {d.delivery_fee.toFixed(2)}</p>
                 )}
               </div>
 

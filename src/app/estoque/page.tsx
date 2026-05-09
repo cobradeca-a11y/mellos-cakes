@@ -28,18 +28,18 @@ export default async function EstoquePage() {
       {/* Summary */}
       <div className="grid grid-cols-3 gap-4">
         <div className="card p-4 text-center border-l-4 border-green-500">
-          <p className="text-2xl font-display font-bold text-neutral-900">{ok.length}</p>
-          <p className="text-sm text-neutral-500 mt-1">Em dia</p>
+          <p className="text-2xl font-display font-bold text-[var(--text-1)]">{ok.length}</p>
+          <p className="text-sm text-[var(--text-3)] mt-1">Em dia</p>
         </div>
         <div className="card p-4 text-center border-l-4 border-red-500">
           <p className="text-2xl font-display font-bold text-red-500">{critical.length}</p>
-          <p className="text-sm text-neutral-500 mt-1 flex items-center justify-center gap-1">
+          <p className="text-sm text-[var(--text-3)] mt-1 flex items-center justify-center gap-1">
             <AlertTriangle className="w-3.5 h-3.5 text-red-400" /> Crítico
           </p>
         </div>
         <div className="card p-4 text-center border-l-4 border-blue-500">
-          <p className="text-2xl font-display font-bold text-neutral-900">{formatCurrency(totalValue)}</p>
-          <p className="text-sm text-neutral-500 mt-1">Valor em Estoque</p>
+          <p className="text-2xl font-display font-bold text-[var(--text-1)]">{formatCurrency(totalValue)}</p>
+          <p className="text-sm text-[var(--text-3)] mt-1">Valor em Estoque</p>
         </div>
       </div>
 
@@ -55,9 +55,9 @@ export default async function EstoquePage() {
             <tbody>
               {critical.map(i => (
                 <tr key={i.id}>
-                  <td className="font-medium text-neutral-900">{i.name}</td>
+                  <td className="font-medium text-[var(--text-1)]">{i.name}</td>
                   <td><span className="badge-red font-mono">{i.stock_quantity} {i.unit}</span></td>
-                  <td className="font-mono text-sm text-neutral-500">{i.min_stock} {i.unit}</td>
+                  <td className="font-mono text-sm text-[var(--text-3)]">{i.min_stock} {i.unit}</td>
                   <td>{formatCurrency(i.stock_quantity * i.cost_per_unit)}</td>
                   <td>
                     <div className="flex gap-2 justify-end">
@@ -74,8 +74,8 @@ export default async function EstoquePage() {
 
       {/* Full stock table */}
       <div className="table-container">
-        <div className="px-5 py-4 border-b border-neutral-100">
-          <h3 className="font-semibold text-neutral-800">Todos os Ingredientes</h3>
+        <div className="px-5 py-4 border-b border-[var(--border-light)]">
+          <h3 className="font-semibold text-[var(--text-1)]">Todos os Ingredientes</h3>
         </div>
         <table className="table">
           <thead>
@@ -87,14 +87,14 @@ export default async function EstoquePage() {
               const pct = i.min_stock > 0 ? Math.min((i.stock_quantity / i.min_stock) * 100, 200) : 100
               return (
                 <tr key={i.id}>
-                  <td className="font-medium text-neutral-900">{i.name}</td>
-                  <td className="text-neutral-500">{i.category ?? '—'}</td>
+                  <td className="font-medium text-[var(--text-1)]">{i.name}</td>
+                  <td className="text-[var(--text-3)]">{i.category ?? '—'}</td>
                   <td>
                     <div className="flex items-center gap-2">
-                      <span className={`font-mono text-sm ${low ? 'text-red-600 font-bold' : 'text-neutral-700'}`}>
+                      <span className={`font-mono text-sm ${low ? 'text-red-600 font-bold' : 'text-[var(--text-2)]'}`}>
                         {i.stock_quantity} {i.unit}
                       </span>
-                      <div className="w-16 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                      <div className="w-16 h-1.5 bg-[var(--hover)] rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full ${pct < 50 ? 'bg-red-400' : pct < 100 ? 'bg-yellow-400' : 'bg-green-400'}`}
                           style={{ width: `${Math.min(pct, 100)}%` }}
@@ -102,7 +102,7 @@ export default async function EstoquePage() {
                       </div>
                     </div>
                   </td>
-                  <td className="font-mono text-sm text-neutral-500">{i.min_stock} {i.unit}</td>
+                  <td className="font-mono text-sm text-[var(--text-3)]">{i.min_stock} {i.unit}</td>
                   <td>{formatCurrency(i.cost_per_unit)}</td>
                   <td className="font-semibold">{formatCurrency(i.stock_quantity * i.cost_per_unit)}</td>
                   <td><span className={low ? 'badge-red' : 'badge-green'}>{low ? 'Crítico' : 'OK'}</span></td>

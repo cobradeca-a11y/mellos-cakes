@@ -22,7 +22,7 @@ export function ProductForm({ action, categories, defaultValues = {} }: Props) {
   return (
     <form action={action} className="space-y-5">
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Informações do Produto</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Informações do Produto</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <label className="label">Nome *</label>
@@ -48,7 +48,7 @@ export function ProductForm({ action, categories, defaultValues = {} }: Props) {
       </div>
 
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Preço & Disponibilidade</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Preço & Disponibilidade</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="label">Preço Base (R$) *</label>
@@ -61,14 +61,14 @@ export function ProductForm({ action, categories, defaultValues = {} }: Props) {
               <input type="checkbox" name="available" value="true"
                 defaultChecked={defaultValues.available !== false}
                 className="w-4 h-4 accent-brand-500" />
-              <span className="text-sm font-medium text-neutral-700">Disponível para venda</span>
+              <span className="text-sm font-medium text-[var(--text-2)]">Disponível para venda</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
               <input type="hidden" name="featured" value="false" />
               <input type="checkbox" name="featured" value="true"
                 defaultChecked={defaultValues.featured === true}
                 className="w-4 h-4 accent-brand-500" />
-              <span className="text-sm font-medium text-neutral-700">Destaque no catálogo</span>
+              <span className="text-sm font-medium text-[var(--text-2)]">Destaque no catálogo</span>
             </label>
           </div>
         </div>

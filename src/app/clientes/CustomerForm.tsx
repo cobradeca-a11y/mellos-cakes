@@ -24,7 +24,7 @@ export function CustomerForm({ action, defaultValues = {} }: CustomerFormProps) 
   return (
     <form action={action} className="space-y-6">
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Informações Básicas</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Informações Básicas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <label className="label">Nome *</label>
@@ -46,7 +46,7 @@ export function CustomerForm({ action, defaultValues = {} }: CustomerFormProps) 
       </div>
 
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Preferências & Observações</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Preferências & Observações</h3>
         <div>
           <label className="label">Preferências</label>
           <textarea name="preferences" defaultValue={defaultValues.preferences ?? ''} rows={2}

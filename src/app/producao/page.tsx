@@ -45,7 +45,7 @@ export default async function ProducaoPage({ searchParams }: { searchParams: { d
       <div className="page-header">
         <div>
           <h1 className="page-title">Agenda de Produção</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">{weekLabel} • {doneTasks}/{totalTasks} tarefas</p>
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{weekLabel} • {doneTasks}/{totalTasks} tarefas</p>
         </div>
       </div>
 
@@ -55,7 +55,7 @@ export default async function ProducaoPage({ searchParams }: { searchParams: { d
           <input type="date" name="data" defaultValue={hoje} className="input w-auto" />
           <button type="submit" className="btn-secondary text-sm">Ir para semana</button>
         </form>
-        <div className="text-sm text-neutral-500">
+        <div className="text-sm text-[var(--text-3)]">
           {totalTasks > 0 && (
             <div className="flex items-center gap-2">
               <div className="w-24 h-2 bg-neutral-200 rounded-full overflow-hidden">
@@ -78,21 +78,21 @@ export default async function ProducaoPage({ searchParams }: { searchParams: { d
           const d = new Date(day + 'T12:00:00')
           return (
             <div key={day} className={`space-y-2 ${isToday ? '' : ''}`}>
-              <div className={`text-center py-2 rounded-xl text-sm font-medium ${isToday ? 'bg-brand-500 text-white' : 'bg-neutral-100 text-neutral-600'}`}>
+              <div className={`text-center py-2 rounded-xl text-sm font-medium ${isToday ? 'bg-brand-500 text-white' : 'bg-[var(--hover)] text-[var(--text-3)]'}`}>
                 <p className="text-xs opacity-70">{d.toLocaleDateString('pt-BR', { weekday: 'short' })}</p>
                 <p className="font-bold">{d.getDate()}</p>
               </div>
               <div className="space-y-1.5 min-h-24">
                 {dayTasks.map((task: any) => (
-                  <div key={task.id} className={`p-2 rounded-lg text-xs border ${task.completed ? 'bg-green-50 border-green-200 opacity-60' : 'bg-white border-neutral-200'}`}>
+                  <div key={task.id} className={`p-2 rounded-lg text-xs border ${task.completed ? 'bg-green-50 border-green-200 opacity-60' : 'bg-[var(--bg-card)] border-[var(--border)]'}`}>
                     <div className="flex items-start gap-1.5">
                       {task.completed
                         ? <CheckCircle2 className="w-3 h-3 text-green-500 mt-0.5 shrink-0" />
-                        : <Clock className="w-3 h-3 text-neutral-400 mt-0.5 shrink-0" />
+                        : <Clock className="w-3 h-3 text-[var(--muted)] mt-0.5 shrink-0" />
                       }
                       <div className="min-w-0">
-                        <p className="font-medium text-neutral-800 truncate">{task.title}</p>
-                        <p className="text-neutral-400 truncate">{task.orders?.customers?.name}</p>
+                        <p className="font-medium text-[var(--text-1)] truncate">{task.title}</p>
+                        <p className="text-[var(--muted)] truncate">{task.orders?.customers?.name}</p>
                         {task.orders?.order_number && (
                           <Link href={`/pedidos/${task.order_id}`} className="text-brand-500 hover:underline">
                             #{task.orders.order_number}
@@ -113,8 +113,8 @@ export default async function ProducaoPage({ searchParams }: { searchParams: { d
 
       {/* All tasks list */}
       <div className="table-container">
-        <div className="px-5 py-4 border-b border-neutral-100">
-          <h3 className="font-semibold text-neutral-800">Tarefas da Semana</h3>
+        <div className="px-5 py-4 border-b border-[var(--border-light)]">
+          <h3 className="font-semibold text-[var(--text-1)]">Tarefas da Semana</h3>
         </div>
         <table className="table">
           <thead>
@@ -122,12 +122,12 @@ export default async function ProducaoPage({ searchParams }: { searchParams: { d
           </thead>
           <tbody>
             {(tasks ?? []).length === 0 ? (
-              <tr><td colSpan={7} className="text-center py-8 text-neutral-400">Nenhuma tarefa esta semana</td></tr>
+              <tr><td colSpan={7} className="text-center py-8 text-[var(--muted)]">Nenhuma tarefa esta semana</td></tr>
             ) : (
               (tasks ?? []).map((task: any) => (
                 <tr key={task.id} className={task.completed ? 'opacity-50' : ''}>
                   <td>{task.scheduled_date ? formatDate(task.scheduled_date) : '—'}</td>
-                  <td className="font-medium text-neutral-900">{task.title}</td>
+                  <td className="font-medium text-[var(--text-1)]">{task.title}</td>
                   <td>
                     {task.orders?.order_number
                       ? <Link href={`/pedidos/${task.order_id}`} className="text-brand-500 hover:underline font-mono text-sm">#{task.orders.order_number}</Link>

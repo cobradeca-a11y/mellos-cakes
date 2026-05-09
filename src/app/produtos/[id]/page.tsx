@@ -3,8 +3,6 @@ import { formatCurrency } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Edit2, ShoppingBag, Star, Clock } from 'lucide-react'
-import { DeleteButton } from '@/components/ui/DeleteButton'
-import { deleteProduct } from '../actions'
 
 export default async function ProdutoDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -16,6 +14,7 @@ export default async function ProdutoDetailPage({ params }: { params: { id: stri
 
   if (!product) notFound()
 
+  // Calculate total cost from all recipe compositions
   const totalCost = (product.recipe_compositions ?? []).reduce((sum: number, comp: any) => {
     const recipeCost = (comp.recipes?.recipe_items ?? []).reduce((rs: number, ri: any) => {
       return rs + (ri.ingredients?.cost_per_unit ?? 0) * ri.quantity
@@ -31,17 +30,12 @@ export default async function ProdutoDetailPage({ params }: { params: { id: stri
           <Link href="/produtos" className="btn-ghost"><ArrowLeft className="w-4 h-4" /></Link>
           <h1 className="page-title">{product.name}</h1>
         </div>
-        <div className="flex items-center gap-2">
-          <Link href={`/produtos/${params.id}/editar`} className="btn-secondary">
-            <Edit2 className="w-4 h-4" /> Editar
-          </Link>
-          <DeleteButton
-            action={async () => { 'use server'; await deleteProduct(params.id) }}
-            confirmMessage={`Excluir "${product.name}" permanentemente? Esta ação não pode ser desfeita.`}
-          />
-        </div>
+        <Link href={`/produtos/${params.id}/editar`} className="btn-secondary">
+          <Edit2 className="w-4 h-4" /> Editar
+        </Link>
       </div>
 
+      {/* Header */}
       <div className="card p-5 flex gap-5">
         <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-brand-50 to-rose-50 flex items-center justify-center shrink-0">
           {product.images?.[0]
@@ -71,6 +65,7 @@ export default async function ProdutoDetailPage({ params }: { params: { id: stri
         </div>
       )}
 
+      {/* Cost analysis */}
       {totalCost > 0 && (
         <div className="card p-5 space-y-3">
           <h3 className="font-semibold text-[var(--text-1)]">Análise de Custo</h3>
@@ -91,6 +86,7 @@ export default async function ProdutoDetailPage({ params }: { params: { id: stri
         </div>
       )}
 
+      {/* Compositions */}
       {(product.recipe_compositions ?? []).length > 0 && (
         <div className="table-container">
           <div className="px-5 py-4 border-b border-[var(--border-light)]">

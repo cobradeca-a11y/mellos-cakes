@@ -49,7 +49,7 @@ export function PurchaseOrderForm({ action, suppliers, ingredients }: Props) {
       return action(fd)
     }} className="space-y-5">
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Dados da Compra</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Dados da Compra</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="label">Fornecedor</label>
@@ -71,9 +71,9 @@ export function PurchaseOrderForm({ action, suppliers, ingredients }: Props) {
 
       <div className="card p-6 space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-neutral-800">Itens</h3>
+          <h3 className="font-semibold text-[var(--text-1)]">Itens</h3>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-neutral-500">Total: <strong className="text-brand-500">{formatCurrency(total)}</strong></span>
+            <span className="text-sm text-[var(--text-3)]">Total: <strong className="text-brand-500">{formatCurrency(total)}</strong></span>
             <button type="button" onClick={addItem} className="btn-ghost text-xs">
               <Plus className="w-3.5 h-3.5" /> Adicionar
             </button>
@@ -100,7 +100,7 @@ export function PurchaseOrderForm({ action, suppliers, ingredients }: Props) {
                     onChange={e => updateItem(i, 'unit_price', Number(e.target.value))}
                     placeholder="R$/un" className="input" />
                 </div>
-                <div className="col-span-2 text-sm font-semibold text-neutral-700 text-center">
+                <div className="col-span-2 text-sm font-semibold text-[var(--text-2)] text-center">
                   {formatCurrency(item.total_price)}
                 </div>
                 <div className="col-span-1 flex justify-center">

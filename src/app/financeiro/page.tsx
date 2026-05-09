@@ -69,32 +69,32 @@ export default async function FinanceiroPage({
         <div className="card p-4 border-l-4 border-green-500">
           <div className="flex items-center gap-2 mb-1">
             <TrendingUp className="w-4 h-4 text-green-600" />
-            <p className="text-xs text-neutral-500">Receitas Recebidas</p>
+            <p className="text-xs text-[var(--text-3)]">Receitas Recebidas</p>
           </div>
           <p className="text-xl font-display font-bold text-green-600">{formatCurrency(receitas)}</p>
-          {receitasPendentes > 0 && <p className="text-xs text-neutral-400 mt-1">+ {formatCurrency(receitasPendentes)} pendente</p>}
+          {receitasPendentes > 0 && <p className="text-xs text-[var(--muted)] mt-1">+ {formatCurrency(receitasPendentes)} pendente</p>}
         </div>
         <div className="card p-4 border-l-4 border-red-500">
           <div className="flex items-center gap-2 mb-1">
             <TrendingDown className="w-4 h-4 text-red-600" />
-            <p className="text-xs text-neutral-500">Despesas Pagas</p>
+            <p className="text-xs text-[var(--text-3)]">Despesas Pagas</p>
           </div>
           <p className="text-xl font-display font-bold text-red-600">{formatCurrency(despesas)}</p>
-          {despesasPendentes > 0 && <p className="text-xs text-neutral-400 mt-1">+ {formatCurrency(despesasPendentes)} pendente</p>}
+          {despesasPendentes > 0 && <p className="text-xs text-[var(--muted)] mt-1">+ {formatCurrency(despesasPendentes)} pendente</p>}
         </div>
         <div className={`card p-4 border-l-4 ${lucro >= 0 ? 'border-blue-500' : 'border-orange-500'}`}>
           <div className="flex items-center gap-2 mb-1">
             <DollarSign className={`w-4 h-4 ${lucro >= 0 ? 'text-blue-600' : 'text-orange-600'}`} />
-            <p className="text-xs text-neutral-500">Lucro Líquido</p>
+            <p className="text-xs text-[var(--text-3)]">Lucro Líquido</p>
           </div>
           <p className={`text-xl font-display font-bold ${lucro >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
             {formatCurrency(lucro)}
           </p>
         </div>
         <div className="card p-4 border-l-4 border-neutral-300">
-          <p className="text-xs text-neutral-500 mb-1">Lançamentos</p>
-          <p className="text-xl font-display font-bold text-neutral-900">{count ?? 0}</p>
-          <p className="text-xs text-neutral-400 mt-1">no período</p>
+          <p className="text-xs text-[var(--text-3)] mb-1">Lançamentos</p>
+          <p className="text-xl font-display font-bold text-[var(--text-1)]">{count ?? 0}</p>
+          <p className="text-xs text-[var(--muted)] mt-1">no período</p>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ export default async function FinanceiroPage({
           <tbody>
             {(entries ?? []).length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-12 text-neutral-400">
+                <td colSpan={7} className="text-center py-12 text-[var(--muted)]">
                   Nenhum lançamento neste período
                 </td>
               </tr>
@@ -123,7 +123,7 @@ export default async function FinanceiroPage({
               (entries ?? []).map((e: any) => (
                 <tr key={e.id}>
                   <td>{formatDate(e.date)}</td>
-                  <td className="font-medium text-neutral-900">{e.description}</td>
+                  <td className="font-medium text-[var(--text-1)]">{e.description}</td>
                   <td><span className="badge-gray">{e.category}</span></td>
                   <td>
                     <span className={e.type === 'receita' ? 'badge-green' : 'badge-red'}>

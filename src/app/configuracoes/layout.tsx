@@ -3,11 +3,11 @@ import { Topbar } from '@/components/layout/Topbar'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <Sidebar />
-      <div style={{ marginLeft: 'var(--sidebar-w)' }}>
+      <div className="md:ml-[260px] transition-all">
         <Topbar />
-        <main className="p-6 animate-fade-in">
+        <main className="p-4 md:p-6 animate-fade-in">
           {children}
         </main>
       </div>

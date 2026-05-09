@@ -32,19 +32,19 @@ export default async function IngredienteDetailPage({ params }: { params: { id: 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         <div className="card p-4 text-center">
-          <p className={`text-2xl font-display font-bold ${lowStock ? 'text-red-500' : 'text-neutral-900'}`}>
+          <p className={`text-2xl font-display font-bold ${lowStock ? 'text-red-500' : 'text-[var(--text-1)]'}`}>
             {ing.stock_quantity} {ing.unit}
           </p>
-          <p className="text-xs text-neutral-500 mt-1">Estoque Atual</p>
+          <p className="text-xs text-[var(--text-3)] mt-1">Estoque Atual</p>
           {lowStock && <span className="badge-red mt-1">Crítico</span>}
         </div>
         <div className="card p-4 text-center">
-          <p className="text-2xl font-display font-bold text-neutral-900">{formatCurrency(ing.cost_per_unit)}</p>
-          <p className="text-xs text-neutral-500 mt-1">Custo / {ing.unit}</p>
+          <p className="text-2xl font-display font-bold text-[var(--text-1)]">{formatCurrency(ing.cost_per_unit)}</p>
+          <p className="text-xs text-[var(--text-3)] mt-1">Custo / {ing.unit}</p>
         </div>
         <div className="card p-4 text-center">
-          <p className="text-2xl font-display font-bold text-neutral-900">{formatCurrency(stockValue)}</p>
-          <p className="text-xs text-neutral-500 mt-1">Valor em Estoque</p>
+          <p className="text-2xl font-display font-bold text-[var(--text-1)]">{formatCurrency(stockValue)}</p>
+          <p className="text-xs text-[var(--text-3)] mt-1">Valor em Estoque</p>
         </div>
       </div>
 
@@ -58,15 +58,15 @@ export default async function IngredienteDetailPage({ params }: { params: { id: 
           ['Lote', ing.lot ?? '—'],
         ].map(([k,v]) => (
           <div key={k}>
-            <p className="text-xs text-neutral-500 mb-0.5">{k}</p>
-            <p className="font-medium text-neutral-800">{v}</p>
+            <p className="text-xs text-[var(--text-3)] mb-0.5">{k}</p>
+            <p className="font-medium text-[var(--text-1)]">{v}</p>
           </div>
         ))}
       </div>
 
       {/* Add movement */}
       <div className="card p-5">
-        <h3 className="font-semibold text-neutral-800 mb-4">Movimentar Estoque</h3>
+        <h3 className="font-semibold text-[var(--text-1)] mb-4">Movimentar Estoque</h3>
         <form action={addStockMovement} className="flex flex-wrap gap-3 items-end">
           <input type="hidden" name="ingredient_id" value={params.id} />
           <div>
@@ -91,8 +91,8 @@ export default async function IngredienteDetailPage({ params }: { params: { id: 
 
       {/* Movement history */}
       <div className="table-container">
-        <div className="px-5 py-4 border-b border-neutral-100">
-          <h3 className="font-semibold text-neutral-800">Histórico de Movimentações</h3>
+        <div className="px-5 py-4 border-b border-[var(--border-light)]">
+          <h3 className="font-semibold text-[var(--text-1)]">Histórico de Movimentações</h3>
         </div>
         <table className="table">
           <thead>
@@ -100,7 +100,7 @@ export default async function IngredienteDetailPage({ params }: { params: { id: 
           </thead>
           <tbody>
             {(movements ?? []).length === 0 ? (
-              <tr><td colSpan={4} className="text-center py-8 text-neutral-400">Sem movimentações</td></tr>
+              <tr><td colSpan={4} className="text-center py-8 text-[var(--muted)]">Sem movimentações</td></tr>
             ) : (
               (movements ?? []).map((m: any) => (
                 <tr key={m.id}>
@@ -111,7 +111,7 @@ export default async function IngredienteDetailPage({ params }: { params: { id: 
                     </span>
                   </td>
                   <td className="font-mono">{m.quantity} {ing.unit}</td>
-                  <td className="text-neutral-500">{m.reason ?? '—'}</td>
+                  <td className="text-[var(--text-3)]">{m.reason ?? '—'}</td>
                 </tr>
               ))
             )}

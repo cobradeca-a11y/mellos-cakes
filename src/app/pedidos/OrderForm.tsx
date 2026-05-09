@@ -26,7 +26,7 @@ export function OrderForm({ action, customers, defaultCustomerId, defaultValues 
   return (
     <form action={action} className="space-y-5">
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Dados do Pedido</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Dados do Pedido</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <label className="label">Cliente</label>
@@ -60,7 +60,7 @@ export function OrderForm({ action, customers, defaultCustomerId, defaultValues 
       </div>
 
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Financeiro</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Financeiro</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="label">Valor Total (R$) *</label>
@@ -84,7 +84,7 @@ export function OrderForm({ action, customers, defaultCustomerId, defaultValues 
       </div>
 
       <div className="card p-6 space-y-4">
-        <h3 className="font-semibold text-neutral-800">Observações</h3>
+        <h3 className="font-semibold text-[var(--text-1)]">Observações</h3>
         <textarea name="notes" rows={4}
           defaultValue={defaultValues.notes ?? ''}
           placeholder="Detalhes do pedido, customizações, tema, cores, recheios, etc..."

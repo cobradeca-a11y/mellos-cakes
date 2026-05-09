@@ -29,7 +29,7 @@ export default async function CompraDetailPage({ params }: { params: { id: strin
           <Link href="/compras" className="btn-ghost"><ArrowLeft className="w-4 h-4" /></Link>
           <div>
             <h1 className="page-title">Pedido de Compra</h1>
-            <p className="text-sm text-neutral-500">{(order.suppliers as any)?.name ?? '—'}</p>
+            <p className="text-sm text-[var(--text-3)]">{(order.suppliers as any)?.name ?? '—'}</p>
           </div>
         </div>
         {canReceive && (
@@ -43,22 +43,22 @@ export default async function CompraDetailPage({ params }: { params: { id: strin
 
       <div className="card p-5 grid grid-cols-3 gap-4 text-sm">
         <div>
-          <p className="text-xs text-neutral-500 mb-1">Status</p>
+          <p className="text-xs text-[var(--text-3)] mb-1">Status</p>
           <span className={statusBadge[order.status] ?? 'badge-gray'}>{order.status}</span>
         </div>
         <div>
-          <p className="text-xs text-neutral-500 mb-1">Previsão</p>
+          <p className="text-xs text-[var(--text-3)] mb-1">Previsão</p>
           <p className="font-medium">{order.expected_delivery ? formatDate(order.expected_delivery) : '—'}</p>
         </div>
         <div>
-          <p className="text-xs text-neutral-500 mb-1">Total</p>
+          <p className="text-xs text-[var(--text-3)] mb-1">Total</p>
           <p className="font-bold text-brand-500">{formatCurrency(order.total_amount)}</p>
         </div>
       </div>
 
       <div className="table-container">
-        <div className="px-5 py-4 border-b border-neutral-100">
-          <h3 className="font-semibold text-neutral-800">Itens do Pedido</h3>
+        <div className="px-5 py-4 border-b border-[var(--border-light)]">
+          <h3 className="font-semibold text-[var(--text-1)]">Itens do Pedido</h3>
         </div>
         <table className="table">
           <thead>
@@ -67,7 +67,7 @@ export default async function CompraDetailPage({ params }: { params: { id: strin
           <tbody>
             {(order.purchase_order_items ?? []).map((item: any) => (
               <tr key={item.id}>
-                <td className="font-medium text-neutral-900">{item.ingredients?.name ?? '—'}</td>
+                <td className="font-medium text-[var(--text-1)]">{item.ingredients?.name ?? '—'}</td>
                 <td className="font-mono text-sm">{item.quantity} {item.ingredients?.unit}</td>
                 <td>{formatCurrency(item.unit_price)}</td>
                 <td className="font-semibold">{formatCurrency(item.total_price)}</td>
@@ -75,9 +75,9 @@ export default async function CompraDetailPage({ params }: { params: { id: strin
             ))}
           </tbody>
           <tfoot>
-            <tr className="bg-neutral-50">
-              <td colSpan={3} className="px-4 py-3 font-semibold text-neutral-700">Total</td>
-              <td className="px-4 py-3 font-bold text-neutral-900">{formatCurrency(order.total_amount)}</td>
+            <tr className="bg-[var(--hover)]">
+              <td colSpan={3} className="px-4 py-3 font-semibold text-[var(--text-2)]">Total</td>
+              <td className="px-4 py-3 font-bold text-[var(--text-1)]">{formatCurrency(order.total_amount)}</td>
             </tr>
           </tfoot>
         </table>
@@ -85,8 +85,8 @@ export default async function CompraDetailPage({ params }: { params: { id: strin
 
       {order.notes && (
         <div className="card p-5">
-          <p className="text-xs text-neutral-500 mb-1">Observações</p>
-          <p className="text-sm text-neutral-700">{order.notes}</p>
+          <p className="text-xs text-[var(--text-3)] mb-1">Observações</p>
+          <p className="text-sm text-[var(--text-2)]">{order.notes}</p>
         </div>
       )}
     </div>

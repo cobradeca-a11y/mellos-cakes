@@ -24,7 +24,7 @@ export default async function IngredientesPage({ searchParams }: { searchParams:
       <div className="page-header">
         <div>
           <h1 className="page-title">Ingredientes</h1>
-          <p className="text-sm text-neutral-500 mt-0.5">{count ?? 0} cadastrados</p>
+          <p className="text-sm text-[var(--text-3)] mt-0.5">{count ?? 0} cadastrados</p>
         </div>
         <Link href="/ingredientes/novo" className="btn-primary">
           <Plus className="w-4 h-4" /> Novo Ingrediente
@@ -55,7 +55,7 @@ export default async function IngredientesPage({ searchParams }: { searchParams:
           <tbody>
             {(ingredients ?? []).length === 0 ? (
               <tr>
-                <td colSpan={8} className="text-center py-12 text-neutral-400">
+                <td colSpan={8} className="text-center py-12 text-[var(--muted)]">
                   <Cookie className="w-10 h-10 mx-auto mb-3 opacity-30" />
                   <p>Nenhum ingrediente encontrado</p>
                 </td>
@@ -68,7 +68,7 @@ export default async function IngredientesPage({ searchParams }: { searchParams:
                     <td>
                       <div className="flex items-center gap-2">
                         {lowStock && <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" />}
-                        <span className="font-medium text-neutral-900">{ing.name}</span>
+                        <span className="font-medium text-[var(--text-1)]">{ing.name}</span>
                       </div>
                     </td>
                     <td>{ing.category ?? '—'}</td>
@@ -76,11 +76,11 @@ export default async function IngredientesPage({ searchParams }: { searchParams:
                     <td className="font-mono text-sm">{ing.unit}</td>
                     <td>{formatCurrency(ing.cost_per_unit)}</td>
                     <td>
-                      <span className={lowStock ? 'text-red-600 font-semibold' : 'text-neutral-700'}>
+                      <span className={lowStock ? 'text-red-600 font-semibold' : 'text-[var(--text-2)]'}>
                         {ing.stock_quantity} {ing.unit}
                       </span>
                     </td>
-                    <td className="text-neutral-500">{ing.min_stock} {ing.unit}</td>
+                    <td className="text-[var(--text-3)]">{ing.min_stock} {ing.unit}</td>
                     <td>
                       <div className="flex gap-2 justify-end">
                         <Link href={`/ingredientes/${ing.id}`} className="btn-ghost text-xs py-1 px-2">Ver</Link>
