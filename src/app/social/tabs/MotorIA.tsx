@@ -6,6 +6,16 @@ import { createClient } from '@/lib/supabase/client'
 
 const BUSINESS_ID = '1d8de479-7996-4868-b2d1-c277b5a7fb73'
 
+type Recommendation = {
+  produto?: string
+  tema?: string
+  acao?: string
+  canal?: string
+  horario?: string
+  cta?: string
+  observacoes?: string
+}
+
 const MOTORES = [
   { id: 'venda',           label: '🛒 Venda',         desc: 'Conteúdo direto para vender' },
   { id: 'engajamento',     label: '💬 Engajamento',   desc: 'Interação e comentários' },
@@ -29,6 +39,7 @@ interface Props {
   canal: string
   onSaved?: () => void
   conteudoOriginal?: string
+  recommendation?: Recommendation
 }
 
 function formatContentForCopy(resultado: any) {
@@ -38,6 +49,7 @@ function formatContentForCopy(resultado: any) {
     resultado?.hashtags,
     resultado?.cta,
     resultado?.melhor_horario ? `Melhor horário: ${resultado.melhor_horario}` : '',
+    resultado?.orientacao_propaganda ? `Orientação de propaganda: ${resultado.orientacao_propaganda}` : '',
     resultado?.prompt_imagem ? `Prompt visual: ${resultado.prompt_imagem}` : '',
     resultado?.texto_na_arte ? `Texto na arte: ${resultado.texto_na_arte}` : '',
     resultado?.fundo_visual ? `Fundo visual: ${resultado.fundo_visual}` : '',
@@ -46,18 +58,18 @@ function formatContentForCopy(resultado: any) {
   return blocks.join('\n\n')
 }
 
-export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
+export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Props) {
   const supabase = createClient()
   const formatos = FORMATOS[canal] ?? ['post']
 
   const [motor,    setMotor]    = useState('venda')
   const [formato,  setFormato]  = useState(formatos[0])
-  const [produto,  setProduto]  = useState('')
+  const [produto,  setProduto]  = useState(recommendation?.produto ?? '')
   const [publico,  setPublico]  = useState('pessoas que amam bolos artesanais')
   const [tom,      setTom]      = useState(TONS[0])
-  const [cta,      setCta]      = useState('Encomendar pelo WhatsApp')
+  const [cta,      setCta]      = useState(recommendation?.cta ?? 'Encomendar pelo WhatsApp')
   const [link,     setLink]     = useState('')
-  const [obs,      setObs]      = useState('')
+  const [obs,      setObs]      = useState(recommendation?.observacoes ?? '')
 
   const [loading,  setLoading]  = useState(false)
   const [resultado,setResultado]= useState<any>(null)
@@ -111,6 +123,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
       cta_link:    link,
       notes: [
         obs,
+        resultado.orientacao_propaganda ? `Orientação de propaganda: ${resultado.orientacao_propaganda}` : '',
         resultado.prompt_imagem ? `Prompt visual: ${resultado.prompt_imagem}` : '',
         resultado.texto_na_arte ? `Texto na arte: ${resultado.texto_na_arte}` : '',
         resultado.fundo_visual ? `Fundo visual: ${resultado.fundo_visual}` : '',
@@ -128,8 +141,6 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
 
   return (
     <div className="space-y-5">
-
-      {/* Seleção de motor */}
       <div>
         <p className="label">Motor de IA</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -147,7 +158,6 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
         </div>
       </div>
 
-      {/* Formato */}
       <div>
         <p className="label">Formato</p>
         <div className="flex flex-wrap gap-2">
@@ -165,7 +175,6 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
         </div>
       </div>
 
-      {/* Campos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2">
           <label className="label">Produto / O que vai divulgar *</label>
@@ -186,6 +195,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
         <div>
           <label className="label">Chamada para ação (CTA)</label>
           <input value={cta} onChange={e=>setCta(e.target.value)} className="input" />
+          <p className="text-xs mt-1 text-[var(--text-3)]">CTA é o próximo passo do cliente. Ex: pedir pelo WhatsApp.</p>
         </div>
         <div>
           <label className="label">WhatsApp / Link de contato</label>
@@ -193,8 +203,8 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
             placeholder="Ex: wa.me/5553999999999" className="input" />
         </div>
         <div className="md:col-span-2">
-          <label className="label">Observações adicionais</label>
-          <textarea value={obs} onChange={e=>setObs(e.target.value)} rows={2}
+          <label className="label">Orientação da Inteligência de Marketing / Observações</label>
+          <textarea value={obs} onChange={e=>setObs(e.target.value)} rows={4}
             placeholder="Promoção especial, prazo, lançamento de sabor novo, tema, preço, retirada/entrega, etc."
             className="input resize-none" />
         </div>
@@ -222,7 +232,6 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
         }
       </button>
 
-      {/* Resultado */}
       {resultado && (
         <div className="space-y-4 animate-fade-in">
           <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -242,9 +251,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
             </div>
           </div>
 
-          {/* Cards de resultado */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-
             {resultado.texto_principal && (
               <div className="card p-4 md:col-span-2">
                 <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>TEXTO PRINCIPAL</p>
@@ -279,6 +286,13 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
               <p className="text-xs mt-1" style={{ color:'var(--text-3)' }}>🕐 Horário: <strong>{resultado.melhor_horario}</strong></p>
               {resultado.dica && <p className="text-xs mt-1 italic" style={{ color:'var(--muted)' }}>💡 {resultado.dica}</p>}
             </div>
+
+            {resultado.orientacao_propaganda && (
+              <div className="card p-4 md:col-span-2">
+                <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>ORIENTAÇÃO DE PROPAGANDA</p>
+                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{resultado.orientacao_propaganda}</p>
+              </div>
+            )}
 
             {(resultado.prompt_imagem || resultado.texto_na_arte || resultado.fundo_visual) && (
               <div className="card p-4 md:col-span-2">
@@ -327,7 +341,6 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
               </div>
             )}
 
-            {/* Roteiro */}
             {resultado.roteiro && (
               <div className="card p-4 md:col-span-2">
                 <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>ROTEIRO DO VÍDEO</p>
@@ -335,7 +348,6 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
               </div>
             )}
 
-            {/* Slides */}
             {resultado.slides && Array.isArray(resultado.slides) && (
               <div className="card p-4 md:col-span-2">
                 <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>SLIDES DO CARROSSEL</p>
@@ -353,7 +365,6 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
               </div>
             )}
 
-            {/* Stories */}
             {resultado.stories && Array.isArray(resultado.stories) && (
               <div className="card p-4 md:col-span-2">
                 <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>SEQUÊNCIA DE STORIES</p>
