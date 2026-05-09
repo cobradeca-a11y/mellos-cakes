@@ -31,6 +31,21 @@ interface Props {
   conteudoOriginal?: string
 }
 
+function formatContentForCopy(resultado: any) {
+  const blocks = [
+    resultado?.texto_principal,
+    resultado?.legenda,
+    resultado?.hashtags,
+    resultado?.cta,
+    resultado?.melhor_horario ? `Melhor horário: ${resultado.melhor_horario}` : '',
+    resultado?.prompt_imagem ? `Prompt visual: ${resultado.prompt_imagem}` : '',
+    resultado?.texto_na_arte ? `Texto na arte: ${resultado.texto_na_arte}` : '',
+    resultado?.fundo_visual ? `Fundo visual: ${resultado.fundo_visual}` : '',
+  ].filter(Boolean)
+
+  return blocks.join('\n\n')
+}
+
 export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
   const supabase = createClient()
   const formatos = FORMATOS[canal] ?? ['post']
@@ -73,8 +88,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
   }
 
   const copiar = () => {
-    const texto = resultado?.texto_principal + '\n\n' + resultado?.legenda + '\n\n' + resultado?.hashtags
-    navigator.clipboard.writeText(texto)
+    navigator.clipboard.writeText(formatContentForCopy(resultado))
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -95,7 +109,14 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
       target_audience: publico,
       tone:        tom,
       cta_link:    link,
-      notes:       obs,
+      notes: [
+        obs,
+        resultado.prompt_imagem ? `Prompt visual: ${resultado.prompt_imagem}` : '',
+        resultado.texto_na_arte ? `Texto na arte: ${resultado.texto_na_arte}` : '',
+        resultado.fundo_visual ? `Fundo visual: ${resultado.fundo_visual}` : '',
+        resultado.interacoes ? `Interações: ${JSON.stringify(resultado.interacoes)}` : '',
+        resultado.checklist_publicacao ? `Checklist: ${JSON.stringify(resultado.checklist_publicacao)}` : '',
+      ].filter(Boolean).join('\n\n'),
       script:      resultado.roteiro,
       carousel_slides: resultado.slides,
       stories_sequence: resultado.stories,
@@ -149,7 +170,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
         <div className="md:col-span-2">
           <label className="label">Produto / O que vai divulgar *</label>
           <input value={produto} onChange={e=>setProduto(e.target.value)}
-            placeholder="Ex: Bolo de Chocolate M com Ninho e Nutella"
+            placeholder="Ex: Bolo de Pote Ninho com Nutella"
             className="input" />
         </div>
         <div>
@@ -174,7 +195,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
         <div className="md:col-span-2">
           <label className="label">Observações adicionais</label>
           <textarea value={obs} onChange={e=>setObs(e.target.value)} rows={2}
-            placeholder="Promoção especial, prazo, tema, etc."
+            placeholder="Promoção especial, prazo, lançamento de sabor novo, tema, preço, retirada/entrega, etc."
             className="input resize-none" />
         </div>
       </div>
@@ -204,7 +225,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
       {/* Resultado */}
       {resultado && (
         <div className="space-y-4 animate-fade-in">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
             <h3 className="font-semibold" style={{ color:'var(--text-1)' }}>
               ✅ Conteúdo gerado — salvo como rascunho após revisão
             </h3>
@@ -241,7 +262,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
             {resultado.hashtags && (
               <div className="card p-4">
                 <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>HASHTAGS</p>
-                <p className="text-sm" style={{ color:'#2563eb' }}>{resultado.hashtags}</p>
+                <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color:'#2563eb' }}>{resultado.hashtags}</p>
               </div>
             )}
 
@@ -258,6 +279,53 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
               <p className="text-xs mt-1" style={{ color:'var(--text-3)' }}>🕐 Horário: <strong>{resultado.melhor_horario}</strong></p>
               {resultado.dica && <p className="text-xs mt-1 italic" style={{ color:'var(--muted)' }}>💡 {resultado.dica}</p>}
             </div>
+
+            {(resultado.prompt_imagem || resultado.texto_na_arte || resultado.fundo_visual) && (
+              <div className="card p-4 md:col-span-2">
+                <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>DIREÇÃO VISUAL PROFISSIONAL</p>
+                {resultado.prompt_imagem && (
+                  <div className="mb-3">
+                    <p className="text-xs font-semibold mb-1" style={{ color:'var(--text-3)' }}>Prompt para imagem/fundo</p>
+                    <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{resultado.prompt_imagem}</p>
+                  </div>
+                )}
+                {resultado.texto_na_arte && (
+                  <div className="mb-3">
+                    <p className="text-xs font-semibold mb-1" style={{ color:'var(--text-3)' }}>Texto para colocar na arte</p>
+                    <p className="text-sm font-semibold" style={{ color:'var(--brand)' }}>{resultado.texto_na_arte}</p>
+                  </div>
+                )}
+                {resultado.fundo_visual && (
+                  <div>
+                    <p className="text-xs font-semibold mb-1" style={{ color:'var(--text-3)' }}>Fundo / composição</p>
+                    <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{resultado.fundo_visual}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {resultado.interacoes && (
+              <div className="card p-4 md:col-span-2">
+                <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>INTERAÇÕES PARA STORIES / ENGAJAMENTO</p>
+                {resultado.interacoes.enquete && <p className="text-sm" style={{ color:'var(--text-2)' }}>📊 Enquete: <strong>{resultado.interacoes.enquete}</strong></p>}
+                {Array.isArray(resultado.interacoes.opcoes) && resultado.interacoes.opcoes.length > 0 && (
+                  <p className="text-sm mt-1" style={{ color:'var(--text-2)' }}>Opções: {resultado.interacoes.opcoes.join(' / ')}</p>
+                )}
+                {resultado.interacoes.caixa_pergunta && <p className="text-sm mt-1" style={{ color:'var(--text-2)' }}>💬 Caixa de pergunta: {resultado.interacoes.caixa_pergunta}</p>}
+                {resultado.interacoes.contagem_regressiva && <p className="text-sm mt-1" style={{ color:'var(--brand)' }}>⏳ Contagem regressiva: {resultado.interacoes.contagem_regressiva}</p>}
+              </div>
+            )}
+
+            {Array.isArray(resultado.checklist_publicacao) && resultado.checklist_publicacao.length > 0 && (
+              <div className="card p-4 md:col-span-2">
+                <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>CHECKLIST DE PUBLICAÇÃO</p>
+                <ul className="space-y-1">
+                  {resultado.checklist_publicacao.map((item: string, i: number) => (
+                    <li key={i} className="text-sm" style={{ color:'var(--text-2)' }}>✓ {item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Roteiro */}
             {resultado.roteiro && (
@@ -278,6 +346,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
                       <p className="text-xs font-bold mb-1" style={{ color:'var(--brand)' }}>Slide {i+1}</p>
                       <p className="text-sm font-semibold" style={{ color:'var(--text-1)' }}>{s.titulo}</p>
                       <p className="text-xs mt-1" style={{ color:'var(--text-3)' }}>{s.texto}</p>
+                      {s.intencao && <p className="text-[11px] mt-2 italic" style={{ color:'var(--muted)' }}>Objetivo: {s.intencao}</p>}
                     </div>
                   ))}
                 </div>
@@ -290,11 +359,12 @@ export function MotorIA({ canal, onSaved, conteudoOriginal }: Props) {
                 <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>SEQUÊNCIA DE STORIES</p>
                 <div className="flex gap-3 overflow-x-auto pb-2">
                   {resultado.stories.map((s: any, i: number) => (
-                    <div key={i} className="shrink-0 w-36 rounded-xl p-3 text-center"
-                      style={{ background:'var(--hover)', border:'1px solid var(--border)', minHeight:'120px' }}>
+                    <div key={i} className="shrink-0 w-44 rounded-xl p-3 text-center"
+                      style={{ background:'var(--hover)', border:'1px solid var(--border)', minHeight:'130px' }}>
                       <p className="text-xs font-bold mb-2" style={{ color:'var(--brand)' }}>Tela {s.tela ?? i+1}</p>
                       <p className="text-xs" style={{ color:'var(--text-2)' }}>{s.texto}</p>
                       {s.acao && <p className="text-xs mt-2 italic" style={{ color:'var(--muted)' }}>👆 {s.acao}</p>}
+                      {s.sticker && <p className="text-xs mt-2" style={{ color:'var(--brand)' }}>Sticker: {s.sticker}</p>}
                     </div>
                   ))}
                 </div>
