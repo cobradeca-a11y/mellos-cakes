@@ -42,6 +42,13 @@ interface Props {
   recommendation?: Recommendation
 }
 
+function labelize(key: string) {
+  return key
+    .replaceAll('_', ' ')
+    .replaceAll('-', ' ')
+    .replace(/\b\w/g, letter => letter.toUpperCase())
+}
+
 function safeText(value: any): string {
   if (value === null || value === undefined) return ''
   if (typeof value === 'string') return value
@@ -49,11 +56,72 @@ function safeText(value: any): string {
   if (Array.isArray(value)) return value.map(safeText).filter(Boolean).join('\n')
   if (typeof value === 'object') {
     return Object.entries(value)
-      .map(([key, val]) => `${key.replaceAll('_', ' ')}: ${safeText(val)}`)
+      .map(([key, val]) => `${labelize(key)}: ${safeText(val)}`)
       .filter(line => !line.endsWith(': '))
       .join('\n')
   }
   return String(value)
+}
+
+function isObjectValue(value: any) {
+  return value && typeof value === 'object' && !Array.isArray(value)
+}
+
+function renderStructuredValue(value: any, depth = 0): React.ReactNode {
+  if (value === null || value === undefined || value === '') return null
+
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{String(value)}</p>
+  }
+
+  if (Array.isArray(value)) {
+    return (
+      <ul className="space-y-1.5">
+        {value.map((item, index) => (
+          <li key={index} className="text-sm" style={{ color:'var(--text-2)' }}>
+            <span className="mr-1.5 text-brand-500">•</span>
+            {isObjectValue(item) || Array.isArray(item) ? (
+              <div className="mt-1 ml-4">{renderStructuredValue(item, depth + 1)}</div>
+            ) : safeText(item)}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  if (isObjectValue(value)) {
+    return (
+      <div className={depth === 0 ? 'grid grid-cols-1 md:grid-cols-2 gap-3' : 'space-y-2'}>
+        {Object.entries(value)
+          .filter(([, val]) => val !== null && val !== undefined && val !== '')
+          .map(([key, val]) => (
+            <div
+              key={key}
+              className={depth === 0 ? 'rounded-xl p-3 border bg-[var(--hover)]' : 'rounded-lg p-2 border'}
+              style={{ borderColor:'var(--border)' }}
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color:'var(--muted)' }}>
+                {labelize(key)}
+              </p>
+              {renderStructuredValue(val, depth + 1)}
+            </div>
+          ))}
+      </div>
+    )
+  }
+
+  return <p className="text-sm" style={{ color:'var(--text-2)' }}>{safeText(value)}</p>
+}
+
+function StructuredCard({ title, value, className = '' }: { title: string; value: any; className?: string }) {
+  if (value === null || value === undefined || value === '') return null
+
+  return (
+    <div className={`card p-4 ${className}`}>
+      <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>{title}</p>
+      {renderStructuredValue(value)}
+    </div>
+  )
 }
 
 function formatContentForCopy(resultado: any) {
@@ -266,101 +334,47 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {resultado.texto_principal && (
-              <div className="card p-4 md:col-span-2">
-                <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>TEXTO PRINCIPAL</p>
-                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-1)' }}>{safeText(resultado.texto_principal)}</p>
-              </div>
-            )}
-
-            {resultado.legenda && (
-              <div className="card p-4">
-                <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>LEGENDA</p>
-                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.legenda)}</p>
-              </div>
-            )}
-
-            {resultado.hashtags && (
-              <div className="card p-4">
-                <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>HASHTAGS</p>
-                <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color:'#2563eb' }}>{safeText(resultado.hashtags)}</p>
-              </div>
-            )}
-
-            {resultado.cta && (
-              <div className="card p-4">
-                <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>CHAMADA PARA AÇÃO</p>
-                <p className="text-sm font-medium" style={{ color:'var(--brand)' }}>{safeText(resultado.cta)}</p>
-              </div>
-            )}
+            <StructuredCard title="TEXTO PRINCIPAL" value={resultado.texto_principal} className="md:col-span-2" />
+            <StructuredCard title="LEGENDA" value={resultado.legenda} />
+            <StructuredCard title="HASHTAGS" value={resultado.hashtags} />
+            <StructuredCard title="CHAMADA PARA AÇÃO" value={resultado.cta} />
 
             <div className="card p-4">
               <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>SUGESTÕES DA IA</p>
               <p className="text-xs" style={{ color:'var(--text-3)' }}>📱 Rede: <strong>{safeText(resultado.melhor_rede)}</strong></p>
               <p className="text-xs mt-1" style={{ color:'var(--text-3)' }}>🕐 Horário: <strong>{safeText(resultado.melhor_horario)}</strong></p>
-              {resultado.dica && <p className="text-xs mt-1 italic" style={{ color:'var(--muted)' }}>💡 {safeText(resultado.dica)}</p>}
+              {resultado.dica && <div className="mt-2">{renderStructuredValue(resultado.dica)}</div>}
             </div>
 
-            {resultado.orientacao_propaganda && (
-              <div className="card p-4 md:col-span-2">
-                <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>ORIENTAÇÃO DE PROPAGANDA</p>
-                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.orientacao_propaganda)}</p>
-              </div>
-            )}
+            <StructuredCard title="ORIENTAÇÃO DE PROPAGANDA" value={resultado.orientacao_propaganda} className="md:col-span-2" />
 
             {(resultado.prompt_imagem || resultado.texto_na_arte || resultado.fundo_visual) && (
-              <div className="card p-4 md:col-span-2">
-                <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>DIREÇÃO VISUAL PROFISSIONAL</p>
+              <div className="card p-4 md:col-span-2 space-y-4">
+                <p className="text-xs font-semibold" style={{ color:'var(--muted)' }}>DIREÇÃO VISUAL PROFISSIONAL</p>
                 {resultado.prompt_imagem && (
-                  <div className="mb-3">
+                  <div>
                     <p className="text-xs font-semibold mb-1" style={{ color:'var(--text-3)' }}>Prompt para imagem/fundo</p>
-                    <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.prompt_imagem)}</p>
+                    {renderStructuredValue(resultado.prompt_imagem)}
                   </div>
                 )}
                 {resultado.texto_na_arte && (
-                  <div className="mb-3">
+                  <div>
                     <p className="text-xs font-semibold mb-1" style={{ color:'var(--text-3)' }}>Texto para colocar na arte</p>
-                    <p className="text-sm font-semibold" style={{ color:'var(--brand)' }}>{safeText(resultado.texto_na_arte)}</p>
+                    {renderStructuredValue(resultado.texto_na_arte)}
                   </div>
                 )}
                 {resultado.fundo_visual && (
                   <div>
                     <p className="text-xs font-semibold mb-1" style={{ color:'var(--text-3)' }}>Fundo / composição</p>
-                    <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.fundo_visual)}</p>
+                    {renderStructuredValue(resultado.fundo_visual)}
                   </div>
                 )}
               </div>
             )}
 
-            {resultado.interacoes && (
-              <div className="card p-4 md:col-span-2">
-                <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>INTERAÇÕES PARA STORIES / ENGAJAMENTO</p>
-                {resultado.interacoes.enquete && <p className="text-sm" style={{ color:'var(--text-2)' }}>📊 Enquete: <strong>{safeText(resultado.interacoes.enquete)}</strong></p>}
-                {Array.isArray(resultado.interacoes.opcoes) && resultado.interacoes.opcoes.length > 0 && (
-                  <p className="text-sm mt-1" style={{ color:'var(--text-2)' }}>Opções: {resultado.interacoes.opcoes.map(safeText).join(' / ')}</p>
-                )}
-                {resultado.interacoes.caixa_pergunta && <p className="text-sm mt-1" style={{ color:'var(--text-2)' }}>💬 Caixa de pergunta: {safeText(resultado.interacoes.caixa_pergunta)}</p>}
-                {resultado.interacoes.contagem_regressiva && <p className="text-sm mt-1" style={{ color:'var(--brand)' }}>⏳ Contagem regressiva: {safeText(resultado.interacoes.contagem_regressiva)}</p>}
-              </div>
-            )}
-
-            {Array.isArray(resultado.checklist_publicacao) && resultado.checklist_publicacao.length > 0 && (
-              <div className="card p-4 md:col-span-2">
-                <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>CHECKLIST DE PUBLICAÇÃO</p>
-                <ul className="space-y-1">
-                  {resultado.checklist_publicacao.map((item: any, i: number) => (
-                    <li key={i} className="text-sm" style={{ color:'var(--text-2)' }}>✓ {safeText(item)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {resultado.roteiro && (
-              <div className="card p-4 md:col-span-2">
-                <p className="text-xs font-semibold mb-2" style={{ color:'var(--muted)' }}>ROTEIRO DO VÍDEO</p>
-                <p className="text-sm whitespace-pre-wrap" style={{ color:'var(--text-2)' }}>{safeText(resultado.roteiro)}</p>
-              </div>
-            )}
+            <StructuredCard title="INTERAÇÕES PARA STORIES / ENGAJAMENTO" value={resultado.interacoes} className="md:col-span-2" />
+            <StructuredCard title="CHECKLIST DE PUBLICAÇÃO" value={resultado.checklist_publicacao} className="md:col-span-2" />
+            <StructuredCard title="ROTEIRO DO VÍDEO" value={resultado.roteiro} className="md:col-span-2" />
 
             {resultado.slides && Array.isArray(resultado.slides) && (
               <div className="card p-4 md:col-span-2">
@@ -370,9 +384,7 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
                     <div key={i} className="rounded-xl p-3 text-center"
                       style={{ background:'var(--hover)', border:'1px solid var(--border)' }}>
                       <p className="text-xs font-bold mb-1" style={{ color:'var(--brand)' }}>Slide {i+1}</p>
-                      <p className="text-sm font-semibold" style={{ color:'var(--text-1)' }}>{safeText(s.titulo)}</p>
-                      <p className="text-xs mt-1" style={{ color:'var(--text-3)' }}>{safeText(s.texto)}</p>
-                      {s.intencao && <p className="text-[11px] mt-2 italic" style={{ color:'var(--muted)' }}>Objetivo: {safeText(s.intencao)}</p>}
+                      {renderStructuredValue(s)}
                     </div>
                   ))}
                 </div>
@@ -384,12 +396,10 @@ export function MotorIA({ canal, onSaved, conteudoOriginal, recommendation }: Pr
                 <p className="text-xs font-semibold mb-3" style={{ color:'var(--muted)' }}>SEQUÊNCIA DE STORIES</p>
                 <div className="flex gap-3 overflow-x-auto pb-2">
                   {resultado.stories.map((s: any, i: number) => (
-                    <div key={i} className="shrink-0 w-44 rounded-xl p-3 text-center"
+                    <div key={i} className="shrink-0 w-64 rounded-xl p-3"
                       style={{ background:'var(--hover)', border:'1px solid var(--border)', minHeight:'130px' }}>
-                      <p className="text-xs font-bold mb-2" style={{ color:'var(--brand)' }}>Tela {safeText(s.tela) || i+1}</p>
-                      <p className="text-xs" style={{ color:'var(--text-2)' }}>{safeText(s.texto)}</p>
-                      {s.acao && <p className="text-xs mt-2 italic" style={{ color:'var(--muted)' }}>👆 {safeText(s.acao)}</p>}
-                      {s.sticker && <p className="text-xs mt-2" style={{ color:'var(--brand)' }}>Sticker: {safeText(s.sticker)}</p>}
+                      <p className="text-xs font-bold mb-2 text-center" style={{ color:'var(--brand)' }}>Tela {safeText(s?.tela) || i+1}</p>
+                      {renderStructuredValue(s)}
                     </div>
                   ))}
                 </div>
